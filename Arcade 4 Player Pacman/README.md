@@ -1,3 +1,3 @@
-Arcade 4 Player Pacman
+# Arcade 4 Player Pacman
 
 This is a test!
