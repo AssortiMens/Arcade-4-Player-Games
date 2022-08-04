@@ -59,6 +59,7 @@ int tilesRepresentation[][] = {
   {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1}, 
   {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}, 
   {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+
 //its not sexy but it does the job
 //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -132,11 +133,30 @@ void setup()
     PFWidth = PacmanField.width;
     PFHeight = PacmanField.height;
 
+//    if ((PFWidth != width/2) || (PFHeight != height))
+//      PacmanField.resize(width/2,height);
+
+//    PFWidth = PacmanField.width;
+//    PFHeight = PacmanField.height;
+
+//    PFScaleX = float(width/2) / float(PFWidth);
+//    PFScaleY = float(height) / float(PFHeight);
+
     if ((PFWidth != (28*int(width/56))) || (PFHeight != (31*int(height/31))))
       PacmanField.resize(28*int(width/56),31*int(height/31));
 
+//    PFWidth = PacmanField.width;
+//    PFHeight = PacmanField.height;
+
     PFScaleX = (float(28*int(width/56)) / (float(PFWidth)));
     PFScaleY = (float(31*int(height/31)) / (float(PFHeight)));
+
+    println(PFScaleX,PFScaleY);
+    println(PFWidth,PFHeight);
+    println(PFScaleX*PFWidth,PFScaleY*PFHeight);
+    println(((PFScaleX*PFWidth))/( width / 56),((PFScaleY*PFHeight))/( height / 31));
+    println(width,height);
+    println(width/16,height/16);
   }
   catch (Exception e) {
     println("data/PacmanField.jpg is missing!");
@@ -183,7 +203,7 @@ void InitialiseAllVariables()
    {
      for (int i=0;i<56;i++)
       {
-        tiles[j][i] = new Tile((i*(floor(width/(2*28))))+8,(j*(floor(height/31)))+8);
+        tiles[j][i] = new Tile((i*((width/(2*28))))+((width/112)),(j*((height/31)))+((height/62)));
 //        tiles[j][i] = new Tile((i*(1.040*(width/(2*28))))+8,(j*(1.046*(height/31)))+8);
         switch(tilesRepresentation[j][i])
          {
@@ -199,17 +219,17 @@ void InitialiseAllVariables()
       }
    }
 
-  joy3 = new Joystick(new PacMan(14*floor(width/(2*28))+8,23*floor(height/31)+8,30,30,color(255,255,0,255)),null,color(255));
-  joy4 = new Joystick(new PacMan((14+28)*floor(width/(2*28))+8,23*floor(height/31)+8,30,30,color(255,255,0,255)),null,color(255));
+  joy3 = new Joystick(new PacMan((int)(14*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,color(255,255,0,255)),null,color(255));
+  joy4 = new Joystick(new PacMan((int)((14+28)*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,color(255,255,0,255)),null,color(255));
   
-  joy1 = new Joystick(null,new Ghost(13*floor(width/(2*28))+8,14*floor(height/31)+8,32,32,color(255,0,0,255)),color(255));
-  joy2 = new Joystick(null,new Ghost(15*floor(width/(2*28))+8,14*floor(height/31)+8,32,32,color(0,255,0,255)),color(255));
+  joy1 = new Joystick(null,new Ghost((int)(13*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(255,0,0,255)),color(255));
+  joy2 = new Joystick(null,new Ghost((int)(15*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(0,255,0,255)),color(255));
 
   Blinky = joy1.PlayerIsGhost;
   Inky = joy2.PlayerIsGhost;
 
-  Pinky = new Ghost((13+28)*floor(width/(2*28))+8,14*floor(height/31)+8,32,32,color(255,0,255,255));
-  Clyde = new Ghost((15+28)*floor(width/(2*28))+8,14*floor(height/31)+8,32,32,color(0,255,255,255));
+  Pinky = new Ghost((int)((13+28)*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(255,0,255,255));
+  Clyde = new Ghost((int)((15+28)*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(0,255,255,255));
   
 }
 
@@ -500,7 +520,7 @@ void PCM_Demo2()
   text("William Senn",0,15);
   
   text("SFX & Titlemusic",0,70);
-  text("William Senn & DJ Mistik",0,100);
+  text("William Senn & DJ Mystik",0,100);
   
   fill(255);
   text("Press a key to play!",0,230-55);
@@ -584,7 +604,8 @@ void PCM_Demo4() {
 void perFrameGame()
 {
   image(PacmanField,0,0); //test1
-  image(PacmanField,28*int(width/56),0); //test2
+//  image(PacmanField,28*int(width/56),0); //test2
+  image(PacmanField,PacmanField.width,0);
 
 //  image(PacmanSprite,312,550);
 
@@ -659,6 +680,27 @@ void keyPressed() { //controls for pacman
       break;
     }
   }
+
+  PacMan Pacman2 = joy4.PlayerIsPacman;
+  
+  switch(key) {
+        case 'w': // up
+          Pacman2.turnTo = new PVector(0,-1);
+          Pacman2.turn = true;
+          break;
+        case 's': // down
+          Pacman2.turnTo = new PVector(0,1);
+          Pacman2.turn = true;
+          break;
+        case 'a': // left
+          Pacman2.turnTo = new PVector(-1,0);
+          Pacman2.turn = true;
+          break;
+        case 'd': // right
+          Pacman2.turnTo = new PVector(1,0);
+          Pacman2.turn = true;
+          break;
+  }
 }
 
 void ButtonPressed() {
@@ -679,82 +721,81 @@ void ButtonPressed() {
 
 Path AStar(Node start, Node finish, PVector vel)
 {
-  LinkedList<Path> big = new LinkedList<Path>();//stores all paths
-  Path extend = new Path(); //a temp Path which is to be extended by adding another node
-  Path winningPath = new Path();  //the final path
-  Path extended = new Path(); //the extended path
-  LinkedList<Path> sorting = new LinkedList<Path>();///used for sorting paths by their distance to the target
+  LinkedList<Path> big = new LinkedList<Path>(); // stores all paths
+  Path extend = new Path(); // a temp Path which is to be extended by adding another node
+  Path winningPath = new Path();  // the final path
+  Path extended = new Path(); // the extended path
+  LinkedList<Path> sorting = new LinkedList<Path>(); // used for sorting paths by their distance to the target
 
-  //startin off with big storing a path with only the starting node
+  // startin off with big storing a path with only the starting node
+
   extend.addToTail(start, finish);
-  extend.velAtLast = new PVector(vel.x, vel.y); //used to prevent ghosts from doing a u turn
+  extend.velAtLast = new PVector(vel.x, vel.y); // used to prevent ghosts from doing a u turn
   big.add(extend);
 
 
-  boolean winner = false; //has a path from start to finish been found  
+  boolean winner = false; // has a path from start to finish been found  
 
-  while (true) //repeat the process until ideal path is found or there is not path found 
-  {
-    extend = big.pop();//grab the front path form the big to be extended
-    if (extend.path.getLast().equals(finish)) //if goal found
+  while (true) {
+    extend = big.pop(); // grab the front path form the big to be extended
+    if (extend.path.getLast().equals(finish)) // if goal found
     {
-      if (!winner) //if first goal found, set winning path
+      if (!winner) // if first goal found, set winning path
       {
         winner = true;
         winningPath = extend.clone();
-      } else { //if current path found the goal in a shorter distance than the previous winner 
+      } else { // if current path found the goal in a shorter distance than the previous winner
         if (winningPath.distance > extend.distance)
         {
-          winningPath = extend.clone();//set this path as the winning path
+          winningPath = extend.clone(); // set this path as the winning path
         }
       }
-      if (big.isEmpty()) //if this extend is the last path then return the winning path
+      if (big.isEmpty()) // if this extend is the last path then return the winning path
       {
         return winningPath.clone();
-      } else {//if not the current extend is useless to us as it cannot be extended since its finished
-        extend = big.pop();//so get the next path
+      } else { // if not the current extend is useless to us as it cannot be extended since its finished
+        extend = big.pop(); // so get the next path
       }
     } 
 
 
-    //if the final node in the path has already been checked and the distance to it was shorter than this path has taken to get there than this path is no good
+    // if the final node in the path has already been checked and the distance to it was shorter than this path has taken to get there than this path is no good
     if (!extend.path.getLast().checked || extend.distance < extend.path.getLast().smallestDistToPoint)
     {     
-      if (!winner || extend.distance + dist(extend.path.getLast().x, extend.path.getLast().y, finish.x, finish.y)  < winningPath.distance) //dont look at paths that are longer than a path which has already reached the goal
+      if (!winner || extend.distance + dist(extend.path.getLast().x, extend.path.getLast().y, finish.x, finish.y)  < winningPath.distance) // dont look at paths that are longer than a path which has already reached the goal
       {
-
-        //if this is the first path to reach this node or the shortest path to reach this node then set the smallest distance to this point to the distance of this path
+        // if this is the first path to reach this node or the shortest path to reach this node then set the smallest distance to this point to the distance of this path
         extend.path.getLast().smallestDistToPoint = extend.distance;
         
-        //move all paths to sorting form big then add the new paths (in the for loop)and sort them back into big.
+        // move all paths to sorting form big then add the new paths (in the for loop)and sort them back into big.
         sorting = (LinkedList)big.clone();
-        Node tempN = new Node(0, 0);//reset temp node
-        if (extend.path.size() >1) {
-          tempN = extend.path.get(extend.path.size() -2); //set the temp node to be the second last node in the path
+        Node tempN = new Node(0, 0); // reset temp node
+        if (extend.path.size() > 1) {
+          tempN = extend.path.get(extend.path.size() - 2); // set the temp node to be the second last node in the path
         }
 
-        for (int i = 0; i < extend.path.getLast().edges.size(); i++) //for each node incident (connected) to the final node of the path to be extended 
+        for (int i = 0; i < extend.path.getLast().edges.size(); i++) // for each node incident (connected) to the final node of the path to be extended 
         {
-          if (tempN != extend.path.getLast().edges.get(i)) //if not going backwards i.e. the new node is not the previous node behind it 
-          {     
-     
-            //if the direction to the new node is in the opposite to the way the path was heading then dont count this path
-            PVector directionToNode = new PVector( extend.path.getLast().edges.get(i).x -extend.path.getLast().x, extend.path.getLast().edges.get(i).y - extend.path.getLast().y );
+          if (tempN != extend.path.getLast().edges.get(i)) // if not going backwards i.e. the new node is not the previous node behind it 
+          {
+            // if the direction to the new node is in the opposite to the way the path was heading then dont count this path
+            PVector directionToNode = new PVector( extend.path.getLast().edges.get(i).x - extend.path.getLast().x, extend.path.getLast().edges.get(i).y - extend.path.getLast().y );
             directionToNode.limit(vel.mag());
             if (directionToNode.x == -1* extend.velAtLast.x && directionToNode.y == -1* extend.velAtLast.y ) {
-            } else {//if not turning around
+            } else { // if not turning around
               extended = extend.clone();
               extended.addToTail(extend.path.getLast().edges.get(i), finish);
               extended.velAtLast = new PVector(directionToNode.x, directionToNode.y);
-              sorting.add(extended.clone());//add this extended list to the list of paths to be sorted
+              sorting.add(extended.clone()); // add this extended list to the list of paths to be sorted
             }
           }
         }
 
 
-        //sorting now contains all the paths form big plus the new paths which where extended
-        //adding the path which has the higest distance to big first so that its at the back of big.
-        //using selection sort i.e. the easiest and worst sorting algorithm
+        // sorting now contains all the paths form big plus the new paths which where extended
+        // adding the path which has the higest distance to big first so that its at the back of big.
+        // using selection sort i.e. the easiest and worst sorting algorithm
+
         big.clear();
         while (!sorting.isEmpty())
         {
@@ -762,42 +803,43 @@ Path AStar(Node start, Node finish, PVector vel)
           int iMax = 0;
           for (int i = 0; i < sorting.size(); i++)
           {
-            if (max < sorting.get(i).distance + sorting.get(i).distToFinish)//A* uses the distance from the goal plus the paths length to determine the sorting order
+            if (max < sorting.get(i).distance + sorting.get(i).distToFinish) // A* uses the distance from the goal plus the paths length to determine the sorting order
             {
               iMax = i;
               max = sorting.get(i).distance + sorting.get(i).distToFinish;
             }
           }
-          big.addFirst(sorting.remove(iMax).clone());//add it to the front so that the ones with the greatest distance end up at the back
-          //and the closest ones end up at the front
+          big.addFirst(sorting.remove(iMax).clone()); // add it to the front so that the ones with the greatest distance end up at the back
+          // and the closest ones end up at the front
         }
       }
       extend.path.getLast().checked = true;
     }
-    //if no more paths avaliable
+    // if no more paths avaliable
     if (big.isEmpty()) {
-      if (winner == false) //there is not path from start to finish
+      if (winner == false) // there is not path from start to finish
       {
-        print("FUCK!!!!!!!!!!"); //error message 
+        print("FUCK!!!!!!!!!!"); // error message 
         return null;
-      } else { //if winner is found then the shortest winner is stored in winning path so return that
+      } else { // if winner is found then the shortest winner is stored in winning path so return that
         return winningPath.clone();
       }
     }
   }
 }
 
-//returns the nearest non wall tile to the input vector
-//input is in tile coordinates
+// returns the nearest non wall tile to the input vector
+// input is in tile coordinates
 
 PVector getNearestNonWallTile(PVector target) {
   float min = 1000;
   int minIndexj = 0;
   int minIndexi = 0;
-  for (int i = 0; i < 56; i++) { //for each tile
+
+  for (int i = 0; i < 56; i++) { // for each tile
     for (int j = 0; j < 31; j++) {
-      if (!tiles[j][i].wall) { //if its not a wall
-        if (dist(i, j, target.x, target.y) < min) { //if its the current closest to target
+      if (!tiles[j][i].wall) { // if its not a wall
+        if (dist(i, j, target.x, target.y) < min) { // if its the current closest to target
           min = dist(i, j, target.x, target.y);
           minIndexj = j;
           minIndexi = i;
@@ -805,12 +847,12 @@ PVector getNearestNonWallTile(PVector target) {
       }
     }
   }
-  return new PVector(minIndexi, minIndexj); //return a PVector to the tile
+  return new PVector(minIndexi, minIndexj); // return a PVector to the tile
 }
 
 class PacMan
 {
-  PVector pos = new PVector(1,0); //null; //int x,y;
+  PVector pos = new PVector(1,0); // null; // int x,y;
   int w,h;
   int score = 0;
   int lives = 10;
@@ -821,8 +863,8 @@ class PacMan
   
   PacMan(int tx, int ty, int tw, int th, color tColor)
    {
-     pos = new PVector(tx,ty); //x = tx;
-                               //y = ty;
+     pos = new PVector(tx,ty); // x = tx;
+                               // y = ty;
      w = tw;
      h = th;
      Color = tColor;
@@ -837,18 +879,18 @@ class PacMan
 
   void Update()
    {
-    if ((pos.x) < (8)) {
-        pos.x = (((55*floor(width/(2*28)))+8)); // - vel.x);
+    if ((pos.x) < (floor(width/112))) {
+        pos.x = (((55*floor(width/(2*28)))+floor(width/112))); // - vel.x);
     }
-    else if ((pos.x) > ((55*floor(width/(2*28)))+8)) {
-        pos.x = (((0*floor(width/(2*28)))+8)); // - vel.x);
+    else if ((pos.x) > ((55*floor(width/(2*28)))+floor(width/112))) {
+        pos.x = (((0*floor(width/(2*28)))+floor(width/112))); // - vel.x);
     }
     
-    if ((pos.y) < (8)) {
-        pos.y = (((30*floor(height/31))+8));
+    if ((pos.y) < (floor(height/62))) {
+        pos.y = (((30*floor(height/31))+floor(height/62)));
     }
-    else if ((pos.y) > ((30*floor(height/31))+8)) {
-        pos.y = (((0*floor(height/31))+8));
+    else if ((pos.y) > ((30*floor(height/31))+floor(height/62))) {
+        pos.y = (((0*floor(height/31))+floor(height/62)));
     }
     
     if (checkPosition()) {
@@ -859,22 +901,24 @@ class PacMan
    
   boolean checkPosition()
    {
-    if ((((pos.x - 8) % floor(width / (2*28))) == 0) && (((pos.y - 8) % floor(height/31)) == 0)) { //if on a critical position
+    if ((((pos.x - floor(width/112)) % floor(width / (2*28))) == 0) && (((pos.y - floor(height/62)) % floor(height/31)) == 0)) { // if on a critical position
 
-      PVector matrixPosition = new PVector(abs(floor(((pos.x - 8) / floor(width/(2*28)))))%56, abs(floor(((pos.y - 8) / floor(height/31))))%31); //convert position to an array position
+      PVector matrixPosition = new PVector(abs(floor(((pos.x - floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y - floor(height/62)) / floor(height/31))))%31); // convert position to an array position
 
-      //reset all the paths for all the ghosts  
+      // reset all the paths for all the ghosts
+
       Blinky.setPath();
       Pinky.setPath();
       Clyde.setPath();
-      Inky.setPath(); 
+      Inky.setPath();
       
-      //check if the position has been eaten or not, note the blank spaces are initialised as already eaten
+      // check if the position has been eaten or not, note the blank spaces are initialised as already eaten
+
       if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten) {
         tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true;
         score += 1; //add a point
-        if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { //if big dot eaten
-          //set all ghosts to frightened
+        if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // if big dot eaten
+          // set all ghosts to frightened
           Blinky.frightened = true;
           Blinky.flashCount = 0;
           Clyde.frightened = true;
@@ -889,25 +933,25 @@ class PacMan
       
       PVector positionToCheck = new PVector(abs(floor(matrixPosition.x + turnTo.x))%56, abs(floor(matrixPosition.y + turnTo.y))%31); // the position in the tiles double array that the player is turning towards
 
-      if (tiles[floor(positionToCheck.y)%31][floor(positionToCheck.x)%56].wall) { //check if there is a free space in the direction that it is going to turn
-        if (tiles[abs(floor(matrixPosition.y + vel.y))%31][abs(floor(matrixPosition.x + vel.x))%56].wall) { //if not check if the path ahead is free
-          return false; //if neither are free then dont move
-        } else { //forward is free
+      if (tiles[floor(positionToCheck.y)%31][floor(positionToCheck.x)%56].wall) { // check if there is a free space in the direction that it is going to turn
+        if (tiles[abs(floor(matrixPosition.y + vel.y))%31][abs(floor(matrixPosition.x + vel.x))%56].wall) { // if not check if the path ahead is free
+          return false; // if neither are free then dont move
+        } else { // forward is free
           return true;
         }
-      } else { //free to turn
+      } else { // free to turn
         vel = new PVector(turnTo.x, turnTo.y);
         return true;
       }
     } else {
-      if ((((pos.x+(10*vel.x) - 8) % floor(width/(2*28))) == 0) && (((pos.y + (10*vel.y) - 8) % floor(height/31)) == 0)) { //if 10 places off a critical position in the direction that pacman is moving
-        PVector matrixPosition = new PVector(abs(floor(((pos.x+(10*vel.x)-8) / floor(width/(2*28)))))%56, abs(floor(((pos.y+(10*vel.y)-8) / floor(height/31))))%31); //convert that position to an array position
-        if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten ) { //if that tile has not been eaten 
-          tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true; //eat it
+      if ((((pos.x+(10*vel.x) - floor(width/112)) % floor(width/(2*28))) == 0) && (((pos.y + (10*vel.y) - floor(height/62)) % floor(height/31)) == 0)) { // if 10 places off a critical position in the direction that pacman is moving
+        PVector matrixPosition = new PVector(abs(floor(((pos.x+(10*vel.x)-floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y+(10*vel.y)-floor(height/62)) / floor(height/31))))%31); // convert that position to an array position
+        if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten ) { // if that tile has not been eaten 
+          tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true; // eat it
           score += 1;
           println("Score:", score);
-          if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) {//big dot eaten
-            //set all ghosts as frightened
+          if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // big dot eaten
+            // set all ghosts as frightened
             Blinky.frightened = true;
             Blinky.flashCount = 0;
             Clyde.frightened = true;
@@ -919,11 +963,11 @@ class PacMan
           }
         }
       }
-      if ((turnTo.x + vel.x == 0) && (vel.y + turnTo.y == 0)) { //if turning chenging directions entirely i.e. 180 degree turn
-        vel = new PVector(turnTo.x, turnTo.y); //turn
+      if ((turnTo.x + vel.x == 0) && (vel.y + turnTo.y == 0)) { // if turning chenging directions entirely i.e. 180 degree turn
+        vel = new PVector(turnTo.x, turnTo.y); // turn
         return true;
       }
-      return true; //if not on a critical postion then continue forward
+      return true; // if not on a critical postion then continue forward
     }
   }
 
@@ -947,7 +991,7 @@ class PacMan
 
 class Ghost
 {
-  PVector pos = new PVector(13*floor(width/(2*28))+8,14*floor(height/31)+8); //int x,y;
+  PVector pos = new PVector(13*floor(width/(2*28))+floor(width/112),14*floor(height/31)+floor(height/62)); // int x,y;
   int w,h;
   color Color;
 
@@ -959,14 +1003,14 @@ class Ghost
   
   PVector vel = new PVector(1, 0);
   Path bestPath = new Path(); // the variable stores the path the ghost will be following
-  ArrayList<Node> ghostNodes = new ArrayList<Node>(); //the nodes making up the path including the ghosts position and the target position
-  Node start; //the ghosts position as a node
-  Node end; //the ghosts target position as a node
+  ArrayList<Node> ghostNodes = new ArrayList<Node>(); // the nodes making up the path including the ghosts position and the target position
+  Node start; // the ghosts position as a node
+  Node end; // the ghosts target position as a node
 
   Ghost(int tx, int ty, int tw, int th, color tColor)
    {
-     pos = new PVector(tx, ty); //pos.x = tx;
-                               //pos.y = ty;
+     pos = new PVector(tx, ty); // pos.x = tx;
+                                // pos.y = ty;
      w = tw;
      h = th;
      Color = tColor;
@@ -983,7 +1027,7 @@ class Ghost
 //       bestPath.show();
 //     ellipse(pos.x,pos.y,w,h);
 
-    //increments counts
+    // increments counts
     chaseCount++;
     if (chase) {
       if (chaseCount > 2000) {
@@ -996,17 +1040,15 @@ class Ghost
         chaseCount = 0;
       }
     }
-    
-    
-    
+
     if (deadForABit) {
       deadCount++;
       if (deadCount > 300) {
         deadForABit = false;
       }
-    } else { //if not deadforabit then show the ghost
+    } else { // if not deadforabit then show the ghost
       if (!frightened) {
-        if (returnHome) { //have the ghost be transparent if on its way home
+        if (returnHome) { // have the ghost be transparent if on its way home
           stroke(Color, 100); 
           fill(Color, 100);
         } else { // colour the ghost
@@ -1014,27 +1056,25 @@ class Ghost
           fill(Color);
         }
         if (bestPath != null)
-//          if (bestPath.size() > 0)
-            bestPath.show(); //show the path the ghost is following
-      } else {//if frightened
+          if (bestPath.path.size() > 0)
+            bestPath.show(); // show the path the ghost is following
+      } else { // if frightened
         flashCount++;
-        if (flashCount > 800) { //after 8 seconds the ghosts are no longer frightened
+        if (flashCount > 800) { // after 8 seconds the ghosts are no longer frightened
           frightened = false;
           flashCount = 0;
         }
 
-        if (floor(flashCount / 30) %2 ==0) { //make it flash white and blue every 30 frames
+        if (floor(flashCount / 30) % 2 == 0) { // make it flash white and blue every 30 frames
           stroke(255);
           fill(255);
-        } else { //flash blue
+        } else { // flash blue
           stroke(0, 0, 200);
           fill(0, 0, 200);
         }
       }
       ellipse(pos.x,pos.y,w,h);
     }
-
- 
    }
    
   void Update()
@@ -1047,63 +1087,65 @@ class Ghost
       x = (pos.x);
       y = (pos.y);
       
-      if ((x) < (8)) {
-        x = ((55*floor(width/(2*28)))+(8)); // - vel.x;
+      if ((x) < (floor(width/112))) {
+        x = ((55*floor(width/(2*28)))+(floor(width/112))); // - vel.x;
       }
       else {
-        if ((x) > (55*floor(width/(2*28))+(8))) {
-          x = ((0*floor(width/(2*28)))+(8)); // - vel.x;
+        if ((x) > (55*floor(width/(2*28))+(floor(width/112)))) {
+          x = ((0*floor(width/(2*28)))+(floor(width/112))); // - vel.x;
         }
       }
     
-      if ((y) < (8)) {
-        y = ((30*floor(height/31))+(8));
+      if ((y) < (floor(height/62))) {
+        y = ((30*floor(height/31))+(floor(height/62)));
       }
       else {
-        if ((y) > ((30*floor(height/31))+8)) {
-          y = ((0*floor(height/31))+(8));
+        if ((y) > ((30*floor(height/31))+floor(height/62))) {
+          y = ((0*floor(height/31))+(floor(height/62)));
         }
       }
       pos = new PVector(x,y);
 
-      checkDirection(); //check if need to change direction next move
+      checkDirection(); // check if need to change direction next move
     }
 
    }
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   
-  //calculates a path from the first node in ghost nodes to the last node in ghostNodes and sets it as best path
+  // calculates a path from the first node in ghost nodes to the last node in ghostNodes and sets it as best path
+
   void setPath() {
     ghostNodes.clear();
     setNodes();
     start = ghostNodes.get(0);
     end = ghostNodes.get(ghostNodes.size()-1);
     Path temp = AStar(start, end, vel);
-    if (temp!= null) { //if not path is found then dont change bestPath
+    if (temp != null) { // if not path is found then dont change bestPath
       bestPath = temp.clone();
     }
   }
+
   //--------------------------------------------------------------------------------------------------------------------------------------------------
-  //sets all the nodes and connects them with adjacent nodes 
-  //also sets the target node
+  // sets all the nodes and connects them with adjacent nodes 
+  // also sets the target node
+
   void setNodes() {
-
-    ghostNodes.add(new Node((pos.x-8) / floor(width/(2*28)), (pos.y-8) / floor(height/31))); //add the current position as a node
-    for (int i = 1; i < 55; i++) {//check every position
+    ghostNodes.add(new Node((pos.x-floor(width/112)) / floor(width/(2*28)), (pos.y-floor(height/62)) / floor(height/31))); // add the current position as a node
+    for (int i = 1; i < 55; i++) { // check every position
       for (int j = 1; j < 30; j++) {
-        //if there is a space up or below and a space left or right then this space is a node
+        // if there is a space up or below and a space left or right then this space is a node
         if (!tiles[j][i].wall) {
-          if (!tiles[j-1][i].wall || !tiles[j+1][i].wall) { //check up for space
-            if (!tiles[j][i-1].wall || !tiles[j][i+1].wall) { //check left and right for space
+          if (!tiles[j-1][i].wall || !tiles[j+1][i].wall) { // check up for space
+            if (!tiles[j][i-1].wall || !tiles[j][i+1].wall) { // check left and right for space
 
-              ghostNodes.add(new Node(i, j));//add the nodes
+              ghostNodes.add(new Node(i, j)); // add the nodes
             }
           }
         }
       }
     }
-    if (returnHome) {//if returning home then the target is just above the ghost room thing
+    if (returnHome) { // if returning home then the target is just above the ghost room thing
       ghostNodes.add(new Node(13, 14));
     } else {
       if (chase) {
@@ -1111,57 +1153,60 @@ class Ghost
         
         if (Pacman1 != null) {
           if (Pacman1.pos != null) {
-            ghostNodes.add(new Node((Pacman1.pos.x-8) / floor(width/(2*28)), (Pacman1.pos.y-8) / floor(height/31))); //target pacman
+            ghostNodes.add(new Node((Pacman1.pos.x-floor(width/112)) / floor(width/(2*28)), (Pacman1.pos.y-floor(height/62)) / floor(height/31))); // target pacman
           }
         }
       } else {
-        ghostNodes.add(new Node(13, 14));//scatter to corner, nope, to their homebase
+        ghostNodes.add(new Node(13, 14)); // scatter to corner, nope, to their homebase
       }
     }
     
-    for (int i = 0; i < ghostNodes.size(); i++) { //connect all the nodes together
+    for (int i = 0; i < ghostNodes.size(); i++) { // connect all the nodes together
       ghostNodes.get(i).addEdges(ghostNodes);
     }
   }
+
   //--------------------------------------------------------------------------------------------------------------------------------------------------
-  //check if the ghost needs to change direction as well as other stuff
+  // check if the ghost needs to change direction as well as other stuff
+
   void checkDirection() {
     PacMan Pacman1 = joy3.PlayerIsPacman;
     
-    if (Pacman1.hitPacman(pos)) { //if hit pacman
-      if (frightened) { //eaten by pacman
+    if (Pacman1.hitPacman(pos)) { // if hit pacman
+      if (frightened) { // eaten by pacman
         returnHome = true;
         frightened = false;
-      } else if (!returnHome) { //killPacman
+      } else if (!returnHome) { // killPacman
         Pacman1.kill();
       }
     }
 
 
     // check if reached home yet
+
     if (returnHome) {
-      if (dist(floor((pos.x-8) / floor(width/(2*28))), floor((pos.y-8) / floor(height/31)), 13, 14) < 1) {
-        //set the ghost as dead for a bit
+      if (dist(floor((pos.x-floor(width/112)) / floor(width/(2*28))), floor((pos.y-floor(height/62)) / floor(height/31)), 13, 14) < 1) {
+        // set the ghost as dead for a bit
         returnHome = false;
         deadForABit = true;
         deadCount = 0;
       }
     }
 
-    if (((pos.x-8) % floor(width/(2*28)) == 0) && ((pos.y - 8) % floor(height/31) == 0)) { //if on a critical position 
+    if (((pos.x-floor(width/112)) % floor(width/(2*28)) == 0) && ((pos.y - floor(height/62)) % floor(height/31) == 0)) { // if on a critical position 
 
-      PVector matrixPosition = new PVector(abs(floor(((pos.x-8) / floor(width/(2*28)))))%56, abs(floor(((pos.y-8) / floor(height/31))))%31); //convert position to an array position
+      PVector matrixPosition = new PVector(abs(floor(((pos.x-floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y-floor(height/62)) / floor(height/31))))%31); // convert position to an array position
 
-      if (frightened) { //no path needs to generated by the ghost if frightened
+      if (frightened) { // no path needs to generated by the ghost if frightened
         boolean isNode = false;
         for (int j = 0; j < ghostNodes.size(); j++) {
-          if (matrixPosition.x ==  ghostNodes.get(j).x && matrixPosition.y == ghostNodes.get(j).y) {
+          if ((matrixPosition.x == ghostNodes.get(j).x) && (matrixPosition.y == ghostNodes.get(j).y)) {
             isNode = true;
           }
         }
-        if (!isNode) {//if not on a node then no need to do anything
+        if (!isNode) { // if not on a node then no need to do anything
           return;
-        } else { //if on a node, set a random direction
+        } else { // if on a node, set a random direction
           PVector newVel = new PVector();
 //          int rand = floor(random(4));
           do {
@@ -1180,8 +1225,8 @@ class Ghost
                 break;
             }
           }
-          while((tiles[abs(floor(matrixPosition.y + newVel.y))%31][abs(floor(matrixPosition.x))%56].wall) || ((newVel.x + (2*vel.x) == 0) && (newVel.y + (2*vel.y) == 0)));
-          //if the random velocity is into a wall or in the opposite direction then choose another one
+          while((tiles[abs(floor(matrixPosition.y + newVel.y))%31][abs(floor(matrixPosition.x + newVel.x))%56].wall) || ((newVel.x + (2*vel.x) == 0) && (newVel.y + (2*vel.y) == 0)));
+          // if the random velocity is into a wall or in the opposite direction then choose another one
 
 /*
           
@@ -1205,16 +1250,16 @@ class Ghost
           
 */
           
-          vel = new PVector(newVel.x/2, newVel.y/2);//halve the speed
+          vel = new PVector(newVel.x/2, newVel.y/2); // halve the speed
         }
-      } else { //not frightened
+      } else { // not frightened
 
         setPath();
 
         if (bestPath != null) {
           if (bestPath.path != null) {
             
-            for (int i = 0; i < (bestPath.path.size()-1); i++) { //if currently on a node turn towards the direction of the next node in the path 
+            for (int i = 0; i < (bestPath.path.size()-1); i++) { // if currently on a node turn towards the direction of the next node in the path 
               if ((matrixPosition.x == bestPath.path.get(i).x) && (matrixPosition.y == bestPath.path.get(i).y)) {
             
                 vel = new PVector(bestPath.path.get(i+1).x - matrixPosition.x, bestPath.path.get(i+1).y - matrixPosition.y);
@@ -1250,11 +1295,13 @@ class Joystick {
     if (PlayerIsPacman != null) {
       PlayerIsPacman.Display();
     }
-    else if (PlayerIsGhost != null) {
-      PlayerIsGhost.Display();
-    }
     else {
-      println("Initialisatiefout Display!");
+      if (PlayerIsGhost != null) {
+        PlayerIsGhost.Display();
+      }
+      else {
+        println("Initialisatiefout Display!");
+      }
     }
   }
 
@@ -1262,11 +1309,13 @@ class Joystick {
     if (PlayerIsPacman != null) {
       PlayerIsPacman.Update();
     }
-    else if (PlayerIsGhost != null) {
-      PlayerIsGhost.Update();
-    }
     else {
-      println("Initialisatiefout Update!");
+      if (PlayerIsGhost != null) {
+        PlayerIsGhost.Update();
+      }
+      else {
+        println("Initialisatiefout Update!");
+      }
     }
   }
 }

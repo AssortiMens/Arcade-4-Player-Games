@@ -1,9 +1,8 @@
 class Node {
-
-  LinkedList<Node> edges = new LinkedList<Node>();//all the nodes this node is connected to 
+  LinkedList<Node> edges = new LinkedList<Node>(); // all the nodes this node is connected to 
   float x;
   float y;
-  float smallestDistToPoint = 10000000;//the distance of smallest path from the start to this node 
+  float smallestDistToPoint = 10000000; // the distance of smallest path from the start to this node 
   int degree;
   int value;  
   boolean checked = false;
@@ -17,13 +16,13 @@ class Node {
   //draw a little circle
   void show() {
     fill(0, 100, 100);
-    ellipse(x*floor(width/(2*28)) +8, y*floor(height/31) +8, 10, 10 );
+    ellipse(x*floor(width/(2*28)) + floor(width/112), y*floor(height/31) + floor(height/62), 10, 10 );
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------------------
   //add all the nodes this node is adjacent to 
   void addEdges(ArrayList<Node> nodes) {
-    for (int i =0; i < nodes.size(); i++) {//for all the nodes
+    for (int i = 0; i < nodes.size(); i++) {//for all the nodes
       if ((nodes.get(i).y == y) ^ (nodes.get(i).x == x)) {
         if (nodes.get(i).y == y) {//if the node is on the same line horizontally
           float mostLeft = min(nodes.get(i).x, x);
