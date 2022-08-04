@@ -1143,9 +1143,10 @@ class Joystick {
             if ((y<ball[i].y) && (ball[i].yDir<0)) {
               ball[i].yDir = -ball[i].yDir;
             }
+            else {
             if ((y>ball[i].y) && (ball[i].yDir>0)) {
               ball[i].yDir = -ball[i].yDir;
-            }
+            }}
             ball[i].ySpeed = (int((float((dy)) / float(h/2)) * float(ballSpeed)) % ballSpeed) + 1; //can be 0! int(random(ballSpeed))+1;
           }
           if (abs(xOrient) == 1) {
@@ -1156,9 +1157,10 @@ class Joystick {
             if ((x<ball[i].x) && (ball[i].xDir<0)) {
               ball[i].xDir = -ball[i].xDir;
             }
+            else {
             if ((x>ball[i].x) && (ball[i].xDir>0)) {
               ball[i].xDir = -ball[i].xDir;
-            }
+            }}
             ball[i].xSpeed = (int((float((dx)) / float(w/2)) * float(ballSpeed)) % ballSpeed) + 1; //can be 0! int(random(ballSpeed))+1;
           }
           ping.trigger();
