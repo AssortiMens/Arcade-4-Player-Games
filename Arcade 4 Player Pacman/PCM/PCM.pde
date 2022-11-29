@@ -181,6 +181,9 @@ void setup()
   ser_Build_Msg_String_And_Send(Lampjes);
   
   InitialiseAllVariables();
+  initGame();
+  
+  frameCounter = 0;
 
   loadHighscores();
   saveHighscores();
@@ -190,15 +193,39 @@ void setup()
 
 void InitialiseAllVariables()
 {
+  Joystick Joys[] = {joy3, joy4, joy1, joy2};
+
+  joy1 = null;
+  joy2 = null;
+  joy3 = null;
+  joy4 = null;
+  
+  Inky = null;
+  Pinky = null;
+  Blinky = null;
+  Clyde = null;
+  
+  ValidCombi = false;
+  
+  NumPacMans = 0;
+  NumGhosts = 0;
+  NumAIGhosts = 0;
+  
+  NumHumanPlayers = 0;
+  for (int i=0;i<4;i++) {
+    ChosenOne[i] = 0;
+    HumanPlayer[i] = false;
+  }
+  
   Opkomst = true;
   TextKleur = -1;
   TextSize = 20;
   TextAngle = 0;
-  frameCounter = 0;
+//  frameCounter = 0;
   Offset1 = 0;
   Offset2 = 0;
-  gameover = false;
-  
+  GameOver = false;
+
   for (int j=0;j<31;j++)
    {
      for (int i=0;i<56;i++)
@@ -219,25 +246,63 @@ void InitialiseAllVariables()
       }
    }
 
-  joy3 = new Joystick(new PacMan((int)(14*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,color(255,255,0,255)),null,color(255));
-  joy4 = new Joystick(new PacMan((int)((14+28)*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,color(255,255,0,255)),null,color(255));
+  Joys[0] = joy3;
+  Joys[1] = joy4;
+  Joys[2] = joy1;
+  Joys[3] = joy2;
   
-  joy1 = new Joystick(null,new Ghost((int)(13*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(255,0,0,255)),color(255));
-  joy2 = new Joystick(null,new Ghost((int)(15*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(0,255,0,255)),color(255));
-
-  Blinky = joy1.PlayerIsGhost;
-  Inky = joy2.PlayerIsGhost;
-
-  Pinky = new Ghost((int)((13+28)*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(255,0,255,255));
-  Clyde = new Ghost((int)((15+28)*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(0,255,255,255));
+  joy3 = Joys[0];
+  joy4 = Joys[1];
+  joy1 = Joys[2];
+  joy2 = Joys[3];
   
+
+  if (joy3 == null)
+  {
+    PacMan Pcmn = new PacMan((int)((14)*(width/56))+(width/112),(int)(23*(height/31))+(height/62),30,30,color(255,255,0,255));
+    joy3 = new Joystick(Pcmn, null, color(0,0,255,255));
+  }
+  if (joy4 == null)
+  {
+    PacMan Pcmn = new PacMan((int)((14+28)*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,color(255,255,0,255));
+    joy4 = new Joystick(Pcmn, null, color(0,255,0,255));
+  }
+  
+  if (joy1 == null)
+  {
+    Ghost Ghst = new Ghost((int)(13*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(255,0,0,255));
+    joy1 = new Joystick(null, Ghst, color(255,0,255,255));
+  }
+  if (joy2 == null)
+  {
+    Ghost Ghst = new Ghost((int)(15*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(0,255,0,255));
+    joy2 = new Joystick(null, Ghst, color(255,0,0,255));
+  }
+  
+  if ((Blinky == null) && (joy1 != null))
+  {
+    Blinky = joy1.PlayerIsGhost; // Possible player ghost
+  }
+  if ((Inky == null) && (joy2 != null))
+  {
+    Inky = joy2.PlayerIsGhost; // Possible player ghost
+  }
+  
+  if (Pinky == null)
+  { // AIGhost for sure
+    Pinky = new Ghost((int)((13+28)*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(255,0,255,255));
+  }
+  if (Clyde == null)
+  { // AIGhost for sure
+    Clyde = new Ghost((int)((15+28)*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,color(0,255,255,255));
+  }
 }
 
-Ghost Pinky;
-Ghost Clyde;
+Ghost Pinky = null;
+Ghost Clyde = null;
 
-Ghost Blinky;
-Ghost Inky;
+Ghost Blinky = null;
+Ghost Inky = null;
 
 void loadHighscores() {
   try {
@@ -291,7 +356,7 @@ int TextAngle = 0;
 int frameCounter = 0;
 PImage PacmanField;
 //PImage PacmanSprite;
-boolean gameover = false;
+boolean GameOver = false;
 
 //Ghost Inky; // = new Ghost(100,100,44,44,color(255,0,0,255));
 //Ghost Blinky; // = new Ghost(100,200,44,44,color(0,255,0,255));
@@ -319,6 +384,8 @@ int CyclicBuffer[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,
                       -1,-2,-4,-8,-16,-32,-64,-128,-256,-512,-1024,-2048,-4096,-8192,
                       -16384,-32768,-65536,-131072,-262144,-524288,-1048576};
 
+boolean ValidCombi = false;
+
 void draw()
 {
   if (frameCounter < 10000)
@@ -334,6 +401,163 @@ void draw()
     PCM_Demo3();
   if ((frameCounter >= 3250) && (frameCounter < 4250))
     PCM_Demo4();
+  
+  buttonPressed = false;
+  if (frameCounter < 4250)
+    ButtonPressed();
+  if ((buttonPressed)&&(frameCounter<10000)) {
+//    initGame();
+    InitialiseAllVariables();
+    initGame();
+    
+    frameCounter=10000;
+    buttonPressed=false;
+    for (int i=0;i<4;i++) {
+      HumanPlayer[i]=false;
+    }
+  }
+
+  if (frameCounter>=10000) {
+    if (frameCounter<11000) {
+      ButtonPressed();
+
+      background(0);
+      Joystick Joys[] = {joy3,joy4,joy1,joy2};
+
+      Joys[0] = joy3;
+      Joys[1] = joy4;
+      Joys[2] = joy1;
+      Joys[3] = joy2;
+      pushMatrix();
+      translate(width/2,height/2);
+      rotate(radians(TextAngle++));
+      TextAngle %= 360;
+      textSize(20);
+      fill(255);
+      textAlign(CENTER,CENTER);
+      text("Players Logged in", 0, -50);
+      for (int k=0;k<4;k++) {
+        if (HumanPlayer[k]) {
+          fill(Joys[k].Color);
+          text(Naam[k], 0, (k*25)-25);
+        }
+        else {
+          fill(Joys[k].Color);
+          text("Hit a key to log in!", 0, (k*25)-25);
+        }
+      }
+      popMatrix();
+      for (int i = TranslationConstance; i < (NumKeys + TranslationConstance); i++) {
+        Key = keysPressed[((i) % TotalNumKeys)];
+        keysPressed[((i) % TotalNumKeys)] = 0;
+        if (Key > 0) {
+          Player = ((((Key - 1) - TranslationConstance) % TotalNumKeys) / NumKeysPerPlayer);
+          Key = ((((Key - 1) - TranslationConstance) % TotalNumKeys) % NumKeysPerPlayer);
+
+          Lampjes |= (1L << (((Player & 3) * NumKeysPerPlayer) + Key));
+
+          HumanPlayer[(Player & 3)] = true;
+          NumHumanPlayers = 0;
+
+          for(int j=0;j<4;j++) {
+            NumHumanPlayers = ((HumanPlayer[j])?(NumHumanPlayers+1):(NumHumanPlayers));
+          }
+        }
+      }
+    }
+  }
+
+  if ((frameCounter >= 10000)&&(frameCounter < 11000))
+    {
+      Joystick Joys[] = {joy3,joy4,joy1,joy2};
+      
+      Joys[0] = joy3;
+      Joys[1] = joy4;
+      Joys[2] = joy1;
+      Joys[3] = joy2;
+      for (int p=0;p<4;p++) {
+        if ((Joys[p].Menu == null) && (HumanPlayer[p] == true))
+        {
+          Joys[p].Menu = new Menu(2,Joys[p].Color,Options);
+        }
+        if ((Joys[p].Menu != null) && (HumanPlayer[p] == true))
+        {
+          Joys[p].Menu.Display(p);
+          Joys[p].Menu.Update(p);
+          ChosenOne[p] = Joys[p].Menu.ItemSelected;
+        }
+      }
+     
+     NumPacMans=0;
+     NumGhosts=0;
+     
+     for (int q=0;q<4;q++)
+      {
+        if (ChosenOne[q] == 1)
+         {
+          NumGhosts++;
+         }
+      }
+     NumPacMans = ((NumHumanPlayers - NumGhosts)<=0)?0:(NumHumanPlayers-NumGhosts);
+     ValidCombi = false;
+     if ((NumHumanPlayers <= 4)&&(NumHumanPlayers > 0))
+     {
+       if (NumHumanPlayers == (NumPacMans + NumGhosts))
+       {
+         if ((NumPacMans == 1) || (NumPacMans == 2))
+         {
+           pushMatrix();
+//           background(0);
+           fill(255);
+           textAlign(CENTER,CENTER);
+           translate(width/2,height/2);
+           rotate(radians((360-TextAngle)%360));
+           text("Geldige combinatie!",0,0);
+           text(NumHumanPlayers,0,25);
+           text(NumPacMans,0,50);
+           text(NumGhosts,0,75);
+           popMatrix();
+           ValidCombi = true;
+         }
+       }
+     }
+    }
+    
+  if ((ValidCombi == false) &&(frameCounter >= 11000))
+    frameCounter = 0;
+    
+  if ((frameCounter >= 11000) && (frameCounter < 12000) && (ValidCombi == true))
+    {
+      pushMatrix();
+      background(0);
+      fill(255);
+      textAlign(CENTER,CENTER);
+      translate(width/2,height/2);
+      rotate(radians(TextAngle++));
+      TextAngle %= 360;
+      text("Player(s) get ready!",0,0);
+      popMatrix();
+    }
+    
+  if ((frameCounter == 12000) && (!GameOver) && (ValidCombi == true))
+   {
+    initGame();
+//    InitialiseAllVariables();
+     
+   }
+
+  if ((frameCounter >= 12000) && (!GameOver) && (ValidCombi == true))
+    {
+      perFrameGame();
+      if (GameOver)
+        {
+          // check highscore
+          frameCounter = 0; // reset!!
+          GameOver = false;
+          InitialiseAllVariables(); // soort reset
+          initGame();
+        }
+    }    
 
   ser_Build_Msg_String_And_Send(Lampjes);
   
@@ -342,7 +566,89 @@ void draw()
     if (frameCounter >= 10000)
       ;
     else
-      frameCounter = 0;
+     {
+       frameCounter = 0;
+//       InitialiseAllVariables();
+//       initGame();
+     }
+}
+
+int ChosenOne[] = { 0,0,0,0 };
+int NumPacMans = 0;
+int NumGhosts = 0;
+int NumAIGhosts = 0;
+
+void initGame() {
+//  InitialiseAllVariables();
+  Joystick Joys[] = {joy3,joy4,joy1,joy2};
+
+  Joys[0] = joy3;
+  Joys[1] = joy4;
+  Joys[2] = joy1;
+  Joys[3] = joy2;
+
+  for (int i=0;i<4;i++)
+  {
+    if (Joys[i] != null)
+     {
+    if ((HumanPlayer[i] == true) && (ValidCombi == true))
+    {
+      if (ChosenOne[i] == 0) // if (ChosenOne[i] == 0) // Joys[i] = pacman
+      {
+        Joys[i].PlayerIsPacman = new PacMan((int)((14+(28*(i&1)))*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,Joys[i].Color);
+        Joys[i].PlayerIsGhost = null;
+        Joys[i].AIGhost = null;
+      }
+      else // Joys[i] = Ghost
+      {
+        Joys[i].PlayerIsGhost = new Ghost((int)((13+(i&2)+(28*(i&1)))*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
+        Joys[i].PlayerIsPacman = null;
+        Joys[i].AIGhost = null;
+      }
+    }
+    else // AI Ghost or AI Pacman
+    {
+      Joys[i].AIGhost = new Ghost((int)((13+(1*(i&2))+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
+//      Blinky = new Ghost((int)((13+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
+//      Inky = new Ghost((int)((15+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
+      Joys[i].PlayerIsPacman = null;
+      Joys[i].PlayerIsGhost = null;
+    }
+     }
+     else
+     {
+       println("Error Joys[i] == null!!");
+     }
+  }
+
+  NumAIGhosts = 0;
+  for (int i=0;i<4;i++)
+   {
+    if (Joys[i].AIGhost != null)
+    {
+      if (NumAIGhosts == 0)
+        Blinky = Joys[i].AIGhost; //new Ghost((int)((13+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
+      if (NumAIGhosts == 1)
+        Inky = Joys[i].AIGhost; //  Inky = new Ghost((int)((15+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
+      if (NumAIGhosts == 2)
+        Pinky = Joys[i].AIGhost;
+      if (NumAIGhosts == 3)
+        Clyde = Joys[i].AIGhost;
+      NumAIGhosts++;
+    }
+   }
+   
+   if (Blinky == null)
+     Blinky = new Ghost((int)((13)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(255,0,0,255));
+   if (Inky == null)
+     Inky = new Ghost((int)((15)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,0,255,255));
+   if (Pinky == null)
+     Pinky = new Ghost((int)((13+28)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(255,128,128,255));
+   if (Clyde == null)
+     Clyde = new Ghost((int)((15+28)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,255,255,255));
+
+//  Pinky = new Ghost((int)((13)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,255,255,255));
+//  Clyde = new Ghost((int)((15+28)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,0,255,255));
 }
 
 int Lampjes = 0;
@@ -596,9 +902,41 @@ void PCM_Demo3()
 
 void PCM_Demo4() {
   background(0); //exampletest
+  if (Opkomst)
+   {
+     TextKleur++;
+     if (TextKleur > 255) {
+       TextKleur = 255;
+       if ((frameCounter % 1000) == (1250-255))
+         Opkomst = false;
+     }
+   }
+  else
+   {
+     TextKleur--;
+     if (TextKleur < 0)
+       {
+         TextKleur = 0;
+         Opkomst = true;
+       }
+   }
+
 
   perFrameGame();
 
+  pushMatrix();
+  translate(width/2,height/2);
+  rotate(radians(TextAngle++));
+  TextAngle %= 360;
+  textAlign(CENTER,CENTER);
+  textSize(20); // textSize(TextSize); TextSize++;
+  // if (TextSize > 20)
+  //   TextSize = 20;
+  fill(TextKleur);
+  text("DEMO",0,0);
+  fill(255);
+  text("Press a key to play!",0,150);
+  popMatrix();
 }
 
 void perFrameGame()
@@ -609,7 +947,7 @@ void perFrameGame()
 
 //  image(PacmanSprite,312,550);
 
-  if (!gameover) {
+  if (!GameOver) {
     for (int i=0;i<31;i++)
      {
        for (int j=0;j<56;j++)
@@ -627,34 +965,52 @@ void perFrameGame()
   
 // Do All Displays
     
-    joy3.Display();
-    joy4.Display();
-    joy1.Display();
-    joy2.Display();
+    if (joy3 != null)
+      joy3.Display();
+    if (joy4 != null)
+      joy4.Display();
+    if (joy1 != null)
+      joy1.Display();
+    if (joy2 != null)
+      joy2.Display();
 
-    Pinky.Display();
-    Clyde.Display();
+    if (Pinky != null)
+      Pinky.Display();
+    if (Clyde != null)
+      Clyde.Display();
 
 // Do All Updates
 
-    Pinky.Update();
-    Clyde.Update();
+    if (Pinky != null)
+      Pinky.Update();
+    if (Clyde != null)
+      Clyde.Update();
   
-    joy3.Update(); //Pacman1.Update();
-    joy4.Update(); //Pacman2.Update();
-    joy1.Update();
-    joy2.Update();
+    if (joy3 != null)
+      joy3.Update(); //Pacman1.Update();
+    if (joy4 != null)
+      joy4.Update(); //Pacman2.Update();
+    if (joy1 != null)
+      joy1.Update();
+    if (joy2 != null)
+      joy2.Update();
 
-//    Inky.Display();
-//    Inky.Update();
-  
-//    Blinky.Display();
-//    Blinky.Update();
-  
+    if (Inky != null) {
+      Inky.Display();
+      Inky.Update();
+    }
+    
+    if (Blinky != null) {
+      Blinky.Display();
+      Blinky.Update();
+    }
+    
 //    Pacman1.Display();
 //    Pacman2.Display();
   }
 }
+
+/*
 
 void keyPressed() { //controls for pacman
   PacMan Pacman1 = joy3.PlayerIsPacman;
@@ -681,7 +1037,7 @@ void keyPressed() { //controls for pacman
     }
   }
 
-  PacMan Pacman2 = joy4.PlayerIsPacman;
+  PacMan Pacman2 = joy1.PlayerIsPacman;
   
   switch(key) {
         case 'w': // up
@@ -702,6 +1058,8 @@ void keyPressed() { //controls for pacman
           break;
   }
 }
+
+*/
 
 void ButtonPressed() {
   buttonPressed = false;
@@ -860,6 +1218,7 @@ class PacMan
   PVector vel = new PVector(-1,0);
   PVector turnTo = new PVector(-1,0);
   boolean turn = false;
+  boolean gameover = false;
   
   PacMan(int tx, int ty, int tw, int th, color tColor)
    {
@@ -869,6 +1228,7 @@ class PacMan
      h = th;
      Color = tColor;
      score = 0;
+     gameover = false;
    }
 
   void Display()
@@ -976,6 +1336,7 @@ class PacMan
      lives--;
      if (lives == 0) {
        gameover = true;
+       GameOver = true;
      }
    }
    
@@ -1149,14 +1510,32 @@ class Ghost
       ghostNodes.add(new Node(13, 14));
     } else {
       if (chase) {
-        PacMan Pacman1 = joy3.PlayerIsPacman;
+        Joystick Joys[] = {joy3,joy4,joy1,joy2};
+
+        Joys[0] = joy3;
+        Joys[1] = joy4;
+        Joys[2] = joy1;
+        Joys[3] = joy2;
         
-        if (Pacman1 != null) {
-          if (Pacman1.pos != null) {
-            ghostNodes.add(new Node((Pacman1.pos.x-floor(width/112)) / floor(width/(2*28)), (Pacman1.pos.y-floor(height/62)) / floor(height/31))); // target pacman
+        for (int i=0;i<4;i++) {
+          PacMan Pacman = null;
+          
+          if (Joys[i] != null)
+           {
+//          if (joy3!=null) {
+//            Pacman = joy3.PlayerIsPacman;
+            Pacman = Joys[i].PlayerIsPacman; // = joy3.PlayerIsPacman;
+
+            if (Pacman != null) {
+              if (Pacman.pos != null) {
+                ghostNodes.add(new Node((Pacman.pos.x-floor(width/112)) / floor(width/(2*28)), (Pacman.pos.y-floor(height/62)) / floor(height/31))); // target pacman
+              }
+            }
           }
+//           }
         }
-      } else {
+      }
+      else {
         ghostNodes.add(new Node(13, 14)); // scatter to corner, nope, to their homebase
       }
     }
@@ -1170,17 +1549,33 @@ class Ghost
   // check if the ghost needs to change direction as well as other stuff
 
   void checkDirection() {
-    PacMan Pacman1 = joy3.PlayerIsPacman;
+//    PacMan Pacman1 = joy3.PlayerIsPacman;
+    Joystick Joys[] = {joy3,joy4,joy1,joy2};
     
-    if (Pacman1.hitPacman(pos)) { // if hit pacman
-      if (frightened) { // eaten by pacman
-        returnHome = true;
-        frightened = false;
-      } else if (!returnHome) { // killPacman
-        Pacman1.kill();
-      }
+    Joys[0] = joy3;
+    Joys[1] = joy4;
+    Joys[2] = joy1;
+    Joys[3] = joy2;
+    for (int i=0;i<4;i++)
+    {
+     PacMan Pacman = null;
+     
+     if (Joys[i]!=null) {
+       Pacman = Joys[i].PlayerIsPacman;
+     
+       if (Pacman != null)
+       {
+        if (Pacman.hitPacman(pos)) { // if hit pacman
+          if (frightened) { // eaten by pacman
+            returnHome = true;
+            frightened = false;
+          } else if (!returnHome) { // killPacman
+            Pacman.kill();
+          }
+        }
+       }
+     }
     }
-
 
     // check if reached home yet
 
@@ -1278,15 +1673,19 @@ class Ghost
 class Joystick {
   PacMan    PlayerIsPacman = null;
   Ghost     PlayerIsGhost = null;
+  Ghost     AIGhost = null;
   Highscore Highscore = null;
+  Menu      Menu = null;
   int       xOrient,yOrient;
   color     Color = color(255);
 
   Joystick(PacMan tPacMan,Ghost tGhost,color tColor) {
     PlayerIsPacman = tPacMan;
     PlayerIsGhost = tGhost;
+    AIGhost = null;
     Color = tColor;
     Highscore = null;
+    Menu = null;
     xOrient = 0;
     yOrient = 0;
   }
@@ -1300,7 +1699,12 @@ class Joystick {
         PlayerIsGhost.Display();
       }
       else {
-        println("Initialisatiefout Display!");
+        if (AIGhost != null) {
+          AIGhost.Display();
+        }
+        else {
+         println("Initialisatiefout Display!");
+        }
       }
     }
   }
@@ -1314,7 +1718,12 @@ class Joystick {
         PlayerIsGhost.Update();
       }
       else {
-        println("Initialisatiefout Update!");
+        if (AIGhost != null) {
+          AIGhost.Update();
+        }
+        else {
+          println("Initialisatiefout Update!");
+        }
       }
     }
   }
