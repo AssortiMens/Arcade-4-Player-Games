@@ -475,6 +475,7 @@ void draw() {
     if (((frameCounter>=11000)&&(frameCounter<=21000))&&(!(GameOver))) {
       background(0);
       perFrameGame();
+      DisplayCountdown(21000 - frameCounter);
       GameOver = TestGameOver();
       if (GameOver) {
         frameCounter=21000;
@@ -526,6 +527,8 @@ void draw() {
         joy4.Highscore.Display(); //joy2.Highscore.Display();    // Green
         joy3.Highscore.Display(); //joy1.Highscore.Display();    // Blue
 
+        DisplayCountdown(32000 - frameCounter);
+
         joy3.Highscore.Update();
         joy4.Highscore.Update();
         joy1.Highscore.Update();
@@ -572,6 +575,20 @@ void draw() {
       frameCounter=0;
   }
 } // End of draw()
+
+void DisplayCountdown(int CountDown)
+{
+  pushMatrix();
+  translate(width/2,height/2);
+  rotate(radians(TextOrientation));
+  TextOrientation++;
+  TextOrientation %= 360;
+  textAlign(CENTER,CENTER);
+  textSize(20);
+  fill(255);
+  text(CountDown,0,0);
+  popMatrix();
+}
 
 String string = ""; // Game Over, naam van de winnaar als die er is
 
@@ -1330,6 +1347,8 @@ class Ball {
       }
     }
   }
+
+  int HAngle = 0;
   
   void Display() {
     rectMode(CENTER);
@@ -1340,12 +1359,15 @@ class Ball {
       stroke(CorArray[CorIndex] * r); // pen color is grey / monochrome
       noFill();
       strokeWeight(r);
-      ellipse(x,y,CorArray[CorIndex]*r,CorArray[CorIndex]*r); // rect?!
-    }
+      triangle(x+(cos(radians((HAngle+120)%360))*r*CorArray[CorIndex]),y+(sin(radians((HAngle+120)%360))*r*CorArray[CorIndex]),x+(cos(radians(HAngle%360))*r*CorArray[CorIndex]),y+(sin(radians(HAngle%360))*r*CorArray[CorIndex]),x+(cos(radians((HAngle-120)%360))*r*CorArray[CorIndex]),y+(sin(radians((HAngle-120)%360))*r*CorArray[CorIndex])); // rect?!
+      triangle(x+(cos(radians((HAngle+60)%360))*r*CorArray[CorIndex]),y+(sin(radians((HAngle+60)%360))*r*CorArray[CorIndex]),x+(cos(radians((HAngle+180)%360))*r*CorArray[CorIndex]),y+(sin(radians((HAngle+180)%360))*r*CorArray[CorIndex]),x+(cos(radians((HAngle-60)%360))*r*CorArray[CorIndex]),y+(sin(radians((HAngle-60)%360))*r*CorArray[CorIndex])); // rect?!
+      HAngle++;
+      HAngle %= 360;
+  }
 
     noStroke();
     fill(Color);
-    ellipse(x,y,2*r,2*r); // rect?!
+    rect(x,y,2*r,2*r); // rect?!
 
     CorIndex++;
     CorIndex %= 24;
