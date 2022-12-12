@@ -65,7 +65,7 @@ int tilesRepresentation[][] = {
 
 int NumKeys = 20; /* 20 voor de kast / Arduino */
 int TotalNumKeys = 120; // Normal keyboard, use 20 out of 120
-int TranslationConstance = 1; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
+int TranslationConstance = 0; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
 int NumKeysPerPlayer = 5;
 
 int LinksToetsen[] =  {TranslationConstance+0,TranslationConstance+5,TranslationConstance+10,TranslationConstance+15};
@@ -111,7 +111,7 @@ void setup()
 
   try {
     println(control.deviceListToText(""));
-    stick = control.getDevice("Keyboard"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
+    stick = control.getDevice("Arduino Leonardo"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
   }
   catch (Exception e) {
     println("No Arduino found or no Toetsenbord/Keyboard configured!");
@@ -163,7 +163,7 @@ void setup()
     System.exit(0);
   }
 
-/*
+// /*
 
   try {
     printArray(Serial.list());
@@ -175,7 +175,7 @@ void setup()
     System.exit(0);
   }
 
-*/
+// */
 
   Lampjes = 0;
   ser_Build_Msg_String_And_Send(Lampjes);
@@ -736,11 +736,11 @@ void ser_Build_Msg_String_And_Send(int tCode)
     for (int i = 0; i < len; i++) {
 //      print(msgchars[i]);
 
-/*
+// /*
 
       serial.write((byte)(msgchars[i]));
 
-*/
+// */
 
     }
     OldCode = tCode;
