@@ -65,7 +65,7 @@ int tilesRepresentation[][] = {
 
 int NumKeys = 20; /* 20 voor de kast / Arduino */
 int TotalNumKeys = 120; // Normal keyboard, use 20 out of 120
-int TranslationConstance = 0; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
+int TranslationConstance = 1; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
 int NumKeysPerPlayer = 5;
 
 int LinksToetsen[] =  {TranslationConstance+0,TranslationConstance+5,TranslationConstance+10,TranslationConstance+15};
@@ -111,7 +111,7 @@ void setup()
 
   try {
     println(control.deviceListToText(""));
-    stick = control.getDevice("Arduino Leonardo"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
+    stick = control.getDevice("Keyboard"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
   }
   catch (Exception e) {
     println("No Arduino found or no Toetsenbord/Keyboard configured!");
@@ -163,7 +163,7 @@ void setup()
     System.exit(0);
   }
 
-// /*
+/*
 
   try {
     printArray(Serial.list());
@@ -175,7 +175,7 @@ void setup()
     System.exit(0);
   }
 
-// */
+*/
 
   Lampjes = 0;
   ser_Build_Msg_String_And_Send(Lampjes);
@@ -736,11 +736,11 @@ void ser_Build_Msg_String_And_Send(int tCode)
     for (int i = 0; i < len; i++) {
 //      print(msgchars[i]);
 
-// /*
+/*
 
       serial.write((byte)(msgchars[i]));
 
-// */
+*/
 
     }
     OldCode = tCode;
@@ -935,7 +935,7 @@ void PCM_Demo4() {
   fill(TextKleur);
   text("DEMO",0,0);
   fill(255);
-  text("Press a key to play!",0,150);
+  text("Press a key to play!",0,230-55);
   popMatrix();
 }
 
@@ -974,6 +974,8 @@ void perFrameGame()
     if (joy2 != null)
       joy2.Display();
 
+/*
+
     if (Pinky != null)
       Pinky.Display();
     if (Clyde != null)
@@ -985,7 +987,9 @@ void perFrameGame()
       Pinky.Update();
     if (Clyde != null)
       Clyde.Update();
-  
+
+*/
+
     if (joy3 != null)
       joy3.Update(); //Pacman1.Update();
     if (joy4 != null)
@@ -994,6 +998,8 @@ void perFrameGame()
       joy1.Update();
     if (joy2 != null)
       joy2.Update();
+
+/*
 
     if (Inky != null) {
       Inky.Display();
@@ -1004,7 +1010,9 @@ void perFrameGame()
       Blinky.Display();
       Blinky.Update();
     }
-    
+
+*/
+
 //    Pacman1.Display();
 //    Pacman2.Display();
   }
@@ -1252,6 +1260,82 @@ class PacMan
     else if ((pos.y) > ((30*floor(height/31))+floor(height/62))) {
         pos.y = (((0*floor(height/31))+floor(height/62)));
     }
+
+    if ((HumanPlayer[0]) && (joy3.PlayerIsPacman == this)) {
+      if (stick.getButton(LinksToetsen[0]).pressed()) {
+        turnTo.x = -1;
+        turnTo.y = 0;
+      }
+      if (stick.getButton(RechtsToetsen[0]).pressed()) {
+        turnTo.x = 1;
+        turnTo.y = 0;
+      }
+      if (stick.getButton(PlusToetsen[0]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = -1;
+      }
+      if (stick.getButton(MinToetsen[0]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = 1;
+      }
+    }
+
+    if ((HumanPlayer[1]) && (joy4.PlayerIsPacman == this)) {
+      if (stick.getButton(LinksToetsen[1]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = 1;
+      }
+      if (stick.getButton(RechtsToetsen[1]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = -1;
+      }
+      if (stick.getButton(PlusToetsen[1]).pressed()) {
+        turnTo.x = -1;
+        turnTo.y = 0;
+      }
+      if (stick.getButton(MinToetsen[1]).pressed()) {
+        turnTo.x = 1;
+        turnTo.y = 0;
+      }
+    }
+    
+    if ((HumanPlayer[2]) && (joy1.PlayerIsPacman == this)) {
+      if (stick.getButton(LinksToetsen[2]).pressed()) {
+        turnTo.x = 1;
+        turnTo.y = 0;
+      }
+      if (stick.getButton(RechtsToetsen[2]).pressed()) {
+        turnTo.x = -1;
+        turnTo.y = 0;
+      }
+      if (stick.getButton(PlusToetsen[2]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = 1;
+      }
+      if (stick.getButton(MinToetsen[2]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = -1;
+      }
+    }
+    
+    if ((HumanPlayer[3]) && (joy2.PlayerIsPacman == this)) {
+      if (stick.getButton(LinksToetsen[3]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = -1;
+      }
+      if (stick.getButton(RechtsToetsen[3]).pressed()) {
+        turnTo.x = 0;
+        turnTo.y = 1;
+      }
+      if (stick.getButton(PlusToetsen[3]).pressed()) {
+        turnTo.x = 1;
+        turnTo.y = 0;
+      }
+      if (stick.getButton(MinToetsen[3]).pressed()) {
+        turnTo.x = -1;
+        turnTo.y = 0;
+      }
+    }
     
     if (checkPosition()) {
       pos.add(vel);
@@ -1271,6 +1355,16 @@ class PacMan
       Pinky.setPath();
       Clyde.setPath();
       Inky.setPath();
+      Joystick Joys[] = {joy3,joy4,joy1,joy2};
+      Joys[0] = joy3;
+      Joys[1] = joy4;
+      Joys[2] = joy1;
+      Joys[3] = joy2;
+      for (int i=0;i<4;i++) {
+        if (Joys[i].PlayerIsGhost != null) {
+          Joys[i].PlayerIsGhost.setPath();
+        }
+      }
       
       // check if the position has been eaten or not, note the blank spaces are initialised as already eaten
 
@@ -1287,6 +1381,17 @@ class PacMan
           Pinky.flashCount = 0;
           Inky.frightened = true;
           Inky.flashCount = 0;
+//          Joystick Joys[] = {joy3,joy4,joy1,joy2};
+          Joys[0] = joy3;
+          Joys[1] = joy4;
+          Joys[2] = joy1;
+          Joys[3] = joy2;
+          for (int i=0;i<4;i++) {
+            if (Joys[i].PlayerIsGhost != null) {
+              Joys[i].PlayerIsGhost.frightened = true;
+              Joys[i].PlayerIsGhost.flashCount = 0;
+            }
+          }
         }
       }
       
@@ -1320,6 +1425,17 @@ class PacMan
             Pinky.flashCount = 0;
             Inky.frightened = true;
             Inky.flashCount = 0;
+            Joystick Joys[] = {joy3,joy4,joy1,joy2};
+            Joys[0] = joy3;
+            Joys[1] = joy4;
+            Joys[2] = joy1;
+            Joys[3] = joy2;
+            for (int i=0;i<4;i++) {
+              if (Joys[i].PlayerIsGhost != null) {
+                Joys[i].PlayerIsGhost.frightened = true;
+                Joys[i].PlayerIsGhost.flashCount = 0;
+              }
+            }
           }
         }
       }
@@ -1362,7 +1478,8 @@ class Ghost
   boolean deadForABit = false;
   int deadCount = 0, chaseCount = 0, flashCount = 0;
   
-  PVector vel = new PVector(1, 0);
+  PVector vel = new PVector(-1, 0);
+  PVector turnTo = new PVector(0,0);
   Path bestPath = new Path(); // the variable stores the path the ghost will be following
   ArrayList<Node> ghostNodes = new ArrayList<Node>(); // the nodes making up the path including the ghosts position and the target position
   Node start; // the ghosts position as a node
@@ -1441,9 +1558,89 @@ class Ghost
   void Update()
    {
     float x,y;
+
+/*
     
+    if ((HumanPlayer[0]) && (joy3.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[0]).pressed()) {
+        vel.x = -1;
+        vel.y = 0;
+      }
+      if (stick.getButton(RechtsToetsen[0]).pressed()) {
+        vel.x = 1;
+        vel.y = 0;
+      }
+      if (stick.getButton(PlusToetsen[0]).pressed()) {
+        vel.x = 0;
+        vel.y = -1;
+      }
+      if (stick.getButton(MinToetsen[0]).pressed()) {
+        vel.x = 0;
+        vel.y = 1;
+      }
+    }
+
+    if ((HumanPlayer[1]) && (joy4.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[1]).pressed()) {
+        vel.x = -1;
+        vel.y = 0;
+      }
+      if (stick.getButton(RechtsToetsen[1]).pressed()) {
+        vel.x = 1;
+        vel.y = 0;
+      }
+      if (stick.getButton(PlusToetsen[1]).pressed()) {
+        vel.x = 0;
+        vel.y = -1;
+      }
+      if (stick.getButton(MinToetsen[1]).pressed()) {
+        vel.x = 0;
+        vel.y = 1;
+      }
+    }
+    
+    if ((HumanPlayer[2]) && (joy1.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[2]).pressed()) {
+        vel.x = -1;
+        vel.y = 0;
+      }
+      if (stick.getButton(RechtsToetsen[2]).pressed()) {
+        vel.x = 1;
+        vel.y = 0;
+      }
+      if (stick.getButton(PlusToetsen[2]).pressed()) {
+        vel.x = 0;
+        vel.y = -1;
+      }
+      if (stick.getButton(MinToetsen[2]).pressed()) {
+        vel.x = 0;
+        vel.y = 1;
+      }
+    }
+    
+    if ((HumanPlayer[3]) && (joy2.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[3]).pressed()) {
+        vel.x = -1;
+        vel.y = 0;
+      }
+      if (stick.getButton(RechtsToetsen[3]).pressed()) {
+        vel.x = 1;
+        vel.y = 0;
+      }
+      if (stick.getButton(PlusToetsen[3]).pressed()) {
+        vel.x = 0;
+        vel.y = -1;
+      }
+      if (stick.getButton(MinToetsen[3]).pressed()) {
+        vel.x = 0;
+        vel.y = 1;
+      }
+    }
+
+*/
+
     if (!deadForABit) { //dont move if dead
-      pos.add(vel);
+//      pos.add(vel);
 
       x = (pos.x);
       y = (pos.y);
@@ -1467,12 +1664,221 @@ class Ghost
       }
       pos = new PVector(x,y);
 
-      checkDirection(); // check if need to change direction next move
-    }
+//    turnTo = new PVector(0,0);
 
+    if ((HumanPlayer[0]) && (joy3.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[0]).pressed()) {
+//        newVel.x = -1;
+//        newVel.y = 0;
+        turnTo = new PVector(-1,0);
+//        vel = new PVector(-1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(RechtsToetsen[0]).pressed()) {
+//        newVel.x = 1;
+//        newVel.y = 0;
+        turnTo = new PVector(1,0);
+//        vel = new PVector(1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(PlusToetsen[0]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = -1;
+        turnTo = new PVector(0,-1);
+//        vel = new PVector(0,-1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(MinToetsen[0]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = 1;
+        turnTo = new PVector(0,1);
+//        vel = new PVector(0,1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      checkDirection();
+    }
+//    else {
+    if ((HumanPlayer[1]) && (joy4.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[1]).pressed()) {
+//        newVel.x = -1;
+//        newVel.y = 0;
+        turnTo = new PVector(0,1);
+//        vel = new PVector(0,1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(RechtsToetsen[1]).pressed()) {
+//        newVel.x = 1;
+//        newVel.y = 0;
+        turnTo = new PVector(0,-1);
+//        vel = new PVector(0,-1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(PlusToetsen[1]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = -1;
+        turnTo = new PVector(-1,0);
+//        vel = new PVector(-1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(MinToetsen[1]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = 1;
+        turnTo = new PVector(1,0);
+//        vel = new PVector(1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      checkDirection();
+    }
+//    else {
+    if ((HumanPlayer[2]) && (joy1.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[2]).pressed()) {
+//        newVel.x = -1;
+//        newVel.y = 0;
+        turnTo = new PVector(1,0);
+//        vel = new PVector(1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(RechtsToetsen[2]).pressed()) {
+//        newVel.x = 1;
+//        newVel.y = 0;
+        turnTo = new PVector(-1,0);
+//        vel = new PVector(-1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(PlusToetsen[2]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = -1;
+        turnTo = new PVector(0,1);
+//        vel = new PVector(0,1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(MinToetsen[2]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = 1;
+        turnTo = new PVector(0,-1);
+//        vel = new PVector(0,-1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      checkDirection();
+    }
+//    else {
+    if ((HumanPlayer[3]) && (joy2.PlayerIsGhost == this)) {
+      if (stick.getButton(LinksToetsen[3]).pressed()) {
+//        newVel.x = -1;
+//        newVel.y = 0;
+        turnTo = new PVector(0,-1);
+//        vel = new PVector(0,-1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(RechtsToetsen[3]).pressed()) {
+//        newVel.x = 1;
+//        newVel.y = 0;
+        turnTo = new PVector(0,1);
+//        vel = new PVector(0,1);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(PlusToetsen[3]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = -1;
+        turnTo = new PVector(1,0);
+//        vel = new PVector(1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      if (stick.getButton(MinToetsen[3]).pressed()) {
+//        newVel.x = 0;
+//        newVel.y = 1;
+        turnTo = new PVector(-1,0);
+//        vel = new PVector(-1,0);
+//        pos.add(vel);
+        if (checkDir())
+          pos.add(vel);
+      }
+      checkDirection();
+    }
+//    else {
+//      pos.add(vel);
+//      if (checkDir())
+      if (((!HumanPlayer[0])&&(joy3.AIGhost==this))||((!HumanPlayer[1])&&(joy4.AIGhost==this))||((!HumanPlayer[2])&&(joy1.AIGhost==this))||((!HumanPlayer[3])&&(joy2.AIGhost==this)))
+        pos.add(vel); // Add AI movement
+      checkDirection();
+//    }}}}
+//     if (checkDir()) { // check if need to change direction next move
+//       pos.add(vel);
+//     }
+//     checkDirection();
+    }
    }
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
+
+  boolean checkDir() {
+    if (((((int)(pos.x-floor(width/112))+(int)0)%floor(width/56)) == 0) && (((int)(pos.y-floor(height/62))+(int)0)%floor(height/31)) == 0)
+     {
+      PVector matrixPosition = new PVector(abs(floor(pos.x-floor(width/112))/floor(width/56))%56,abs(floor(pos.y-floor(height/62))/floor(height/31))%31);
+
+      if (tiles[(abs((int)matrixPosition.y+(int)turnTo.y))%31][(abs((int)matrixPosition.x+(int)turnTo.x))%56].wall) {
+        if (tiles[(abs((int)matrixPosition.y+(int)vel.y))%31][(abs((int)matrixPosition.x+(int)vel.x))%56].wall) {
+          return(false); // mag niet worden uitgevoerd
+        }
+        else {
+          return(true);
+        }
+      }
+      else {
+        vel = new PVector(turnTo.x,turnTo.y);
+        return(true);
+      }
+    }
+    else {
+//      vel = new PVector(turnTo.x,turnTo.y);
+      if (((turnTo.x + vel.x) == 0) && ((turnTo.y + vel.y) == 0)) {
+        if ((turnTo.x == 0) && (turnTo.y == 0)) {
+          vel = new PVector(turnTo.x,turnTo.y);
+          return(true);
+        }
+        else {
+          vel = new PVector(turnTo.x,turnTo.y);
+        }
+        return(true);
+      }
+      else {
+        if ((turnTo.x == 0)&&(turnTo.y == 0)) {
+          vel = new PVector(turnTo.x,turnTo.y);
+        }
+        return(true);
+      }
+    }
+  }
   
   // calculates a path from the first node in ghost nodes to the last node in ghostNodes and sets it as best path
 
@@ -1566,13 +1972,15 @@ class Ghost
        if (Pacman != null)
        {
         if (Pacman.hitPacman(pos)) { // if hit pacman
-          if (frightened) { // eaten by pacman
-            returnHome = true;
-            frightened = false;
-          } else if (!returnHome) { // killPacman
-            Pacman.kill();
+//          if (Joys[i].PlayerIsGhost != null) {
+            if (frightened) { // eaten by pacman
+              returnHome = true;
+              frightened = false;
+            } else if (!returnHome) { // killPacman
+              Pacman.kill();
+            }
           }
-        }
+//        }
        }
      }
     }
@@ -1619,6 +2027,8 @@ class Ghost
                 newVel = new PVector(0, -1);
                 break;
             }
+            
+            
           }
           while((tiles[abs(floor(matrixPosition.y + newVel.y))%31][abs(floor(matrixPosition.x + newVel.x))%56].wall) || ((newVel.x + (2*vel.x) == 0) && (newVel.y + (2*vel.y) == 0)));
           // if the random velocity is into a wall or in the opposite direction then choose another one
@@ -1646,6 +2056,7 @@ class Ghost
 */
           
           vel = new PVector(newVel.x/2, newVel.y/2); // halve the speed
+          return;
         }
       } else { // not frightened
 
@@ -1658,15 +2069,22 @@ class Ghost
               if ((matrixPosition.x == bestPath.path.get(i).x) && (matrixPosition.y == bestPath.path.get(i).y)) {
             
                 vel = new PVector(bestPath.path.get(i+1).x - matrixPosition.x, bestPath.path.get(i+1).y - matrixPosition.y);
+            
                 vel.limit(1);
 
                 return;
               }
+//              return(true);
             }
+//            return(false);
           }
+//          return(false);
         }
+//        return(false);
       }
+//      return(false);
     }
+//    return(true);
   }
 }
 
