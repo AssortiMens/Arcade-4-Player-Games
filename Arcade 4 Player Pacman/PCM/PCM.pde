@@ -523,9 +523,13 @@ void draw()
      }
     }
     
-  if ((ValidCombi == false) &&(frameCounter >= 11000))
+  if ((ValidCombi == false) && (frameCounter >= 11000))
+   {
     frameCounter = 0;
-    
+    InitialiseAllVariables();
+    initGame();
+   }
+
   if ((frameCounter >= 11000) && (frameCounter < 12000) && (ValidCombi == true))
     {
       pushMatrix();
@@ -598,21 +602,32 @@ void initGame() {
         Joys[i].PlayerIsPacman = new PacMan((int)((14+(28*(i&1)))*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,Joys[i].Color);
         Joys[i].PlayerIsGhost = null;
         Joys[i].AIGhost = null;
+        Joys[i].AIPacman = null;
       }
       else // Joys[i] = Ghost
       {
         Joys[i].PlayerIsGhost = new Ghost((int)((13+(i&2)+(28*(i&1)))*(width/(2*28))+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
         Joys[i].PlayerIsPacman = null;
         Joys[i].AIGhost = null;
+        Joys[i].AIPacman = null;
       }
     }
     else // AI Ghost or AI Pacman
     {
-      Joys[i].AIGhost = new Ghost((int)((13+(1*(i&2))+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
-//      Blinky = new Ghost((int)((13+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
-//      Inky = new Ghost((int)((15+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
-      Joys[i].PlayerIsPacman = null;
-      Joys[i].PlayerIsGhost = null;
+      if ((!HumanPlayer[i])&&(!ValidCombi)&&((i&3)==0)) { // default pacman = AIPacman
+        Joys[i].AIPacman = new PacMan((int)((14+(28*(i&1)))*(width/(2*28))+((width/112))),(int)(23*(height/31)+((height/62))),30,30,Joys[i].Color);
+        Joys[i].AIGhost = null;
+        Joys[i].PlayerIsPacman = null;
+        Joys[i].PlayerIsGhost = null;
+      }
+      else {
+        Joys[i].AIGhost = new Ghost((int)((13+(1*(i&2))+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
+//        Blinky = new Ghost((int)((13+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
+//        Inky = new Ghost((int)((15+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(random(256),random(256),random(256),255));
+        Joys[i].PlayerIsPacman = null;
+        Joys[i].PlayerIsGhost = null;
+        Joys[i].AIPacman = null;
+      }
     }
      }
      else
@@ -1263,18 +1278,22 @@ class PacMan
 
     if ((HumanPlayer[0]) && (joy3.PlayerIsPacman == this)) {
       if (stick.getButton(LinksToetsen[0]).pressed()) {
+        Lampjes |= (1L<<(LinksToetsen[0]-TranslationConstance));
         turnTo.x = -1;
         turnTo.y = 0;
       }
       if (stick.getButton(RechtsToetsen[0]).pressed()) {
+        Lampjes |= (1L<<(RechtsToetsen[0]-TranslationConstance));
         turnTo.x = 1;
         turnTo.y = 0;
       }
       if (stick.getButton(PlusToetsen[0]).pressed()) {
+        Lampjes |= (1L<<(PlusToetsen[0]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = -1;
       }
       if (stick.getButton(MinToetsen[0]).pressed()) {
+        Lampjes |= (1L<<(MinToetsen[0]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = 1;
       }
@@ -1282,18 +1301,22 @@ class PacMan
 
     if ((HumanPlayer[1]) && (joy4.PlayerIsPacman == this)) {
       if (stick.getButton(LinksToetsen[1]).pressed()) {
+        Lampjes |= (1L<<(LinksToetsen[1]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = 1;
       }
       if (stick.getButton(RechtsToetsen[1]).pressed()) {
+        Lampjes |= (1L<<(RechtsToetsen[1]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = -1;
       }
       if (stick.getButton(PlusToetsen[1]).pressed()) {
+        Lampjes |= (1L<<(PlusToetsen[1]-TranslationConstance));
         turnTo.x = -1;
         turnTo.y = 0;
       }
       if (stick.getButton(MinToetsen[1]).pressed()) {
+        Lampjes |= (1L<<(MinToetsen[1]-TranslationConstance));
         turnTo.x = 1;
         turnTo.y = 0;
       }
@@ -1301,18 +1324,22 @@ class PacMan
     
     if ((HumanPlayer[2]) && (joy1.PlayerIsPacman == this)) {
       if (stick.getButton(LinksToetsen[2]).pressed()) {
+        Lampjes |= (1L<<(LinksToetsen[2]-TranslationConstance));
         turnTo.x = 1;
         turnTo.y = 0;
       }
       if (stick.getButton(RechtsToetsen[2]).pressed()) {
+        Lampjes |= (1L<<(RechtsToetsen[2]-TranslationConstance));
         turnTo.x = -1;
         turnTo.y = 0;
       }
       if (stick.getButton(PlusToetsen[2]).pressed()) {
+        Lampjes |= (1L<<(PlusToetsen[2]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = 1;
       }
       if (stick.getButton(MinToetsen[2]).pressed()) {
+        Lampjes |= (1L<<(MinToetsen[2]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = -1;
       }
@@ -1320,18 +1347,22 @@ class PacMan
     
     if ((HumanPlayer[3]) && (joy2.PlayerIsPacman == this)) {
       if (stick.getButton(LinksToetsen[3]).pressed()) {
+        Lampjes |= (1L<<(LinksToetsen[3]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = -1;
       }
       if (stick.getButton(RechtsToetsen[3]).pressed()) {
+        Lampjes |= (1L<<(RechtsToetsen[3]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = 1;
       }
       if (stick.getButton(PlusToetsen[3]).pressed()) {
+        Lampjes |= (1L<<(PlusToetsen[3]-TranslationConstance));
         turnTo.x = 1;
         turnTo.y = 0;
       }
       if (stick.getButton(MinToetsen[3]).pressed()) {
+        Lampjes |= (1L<<(MinToetsen[3]-TranslationConstance));
         turnTo.x = -1;
         turnTo.y = 0;
       }
@@ -1671,6 +1702,7 @@ class Ghost
 //        newVel.x = -1;
 //        newVel.y = 0;
         turnTo = new PVector(-1,0);
+        Lampjes |= (1L<<(LinksToetsen[0]-TranslationConstance));
 //        vel = new PVector(-1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1680,6 +1712,7 @@ class Ghost
 //        newVel.x = 1;
 //        newVel.y = 0;
         turnTo = new PVector(1,0);
+        Lampjes |= (1L<<(RechtsToetsen[0]-TranslationConstance));
 //        vel = new PVector(1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1689,6 +1722,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = -1;
         turnTo = new PVector(0,-1);
+        Lampjes |= (1L<<(PlusToetsen[0]-TranslationConstance));
 //        vel = new PVector(0,-1);
 //        pos.add(vel);
         if (checkDir())
@@ -1698,6 +1732,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = 1;
         turnTo = new PVector(0,1);
+        Lampjes |= (1L<<(MinToetsen[0]-TranslationConstance));
 //        vel = new PVector(0,1);
 //        pos.add(vel);
         if (checkDir())
@@ -1711,6 +1746,7 @@ class Ghost
 //        newVel.x = -1;
 //        newVel.y = 0;
         turnTo = new PVector(0,1);
+        Lampjes |= (1L<<(LinksToetsen[1]-TranslationConstance));
 //        vel = new PVector(0,1);
 //        pos.add(vel);
         if (checkDir())
@@ -1720,6 +1756,7 @@ class Ghost
 //        newVel.x = 1;
 //        newVel.y = 0;
         turnTo = new PVector(0,-1);
+        Lampjes |= (1L<<(RechtsToetsen[1]-TranslationConstance));
 //        vel = new PVector(0,-1);
 //        pos.add(vel);
         if (checkDir())
@@ -1729,6 +1766,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = -1;
         turnTo = new PVector(-1,0);
+        Lampjes |= (1L<<(PlusToetsen[1]-TranslationConstance));
 //        vel = new PVector(-1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1738,6 +1776,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = 1;
         turnTo = new PVector(1,0);
+        Lampjes |= (1L<<(MinToetsen[1]-TranslationConstance));
 //        vel = new PVector(1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1751,6 +1790,7 @@ class Ghost
 //        newVel.x = -1;
 //        newVel.y = 0;
         turnTo = new PVector(1,0);
+        Lampjes |= (1L<<(LinksToetsen[2]-TranslationConstance));
 //        vel = new PVector(1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1760,6 +1800,7 @@ class Ghost
 //        newVel.x = 1;
 //        newVel.y = 0;
         turnTo = new PVector(-1,0);
+        Lampjes |= (1L<<(RechtsToetsen[2]-TranslationConstance));
 //        vel = new PVector(-1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1769,6 +1810,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = -1;
         turnTo = new PVector(0,1);
+        Lampjes |= (1L<<(PlusToetsen[2]-TranslationConstance));
 //        vel = new PVector(0,1);
 //        pos.add(vel);
         if (checkDir())
@@ -1778,6 +1820,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = 1;
         turnTo = new PVector(0,-1);
+        Lampjes |= (1L<<(MinToetsen[2]-TranslationConstance));
 //        vel = new PVector(0,-1);
 //        pos.add(vel);
         if (checkDir())
@@ -1791,6 +1834,7 @@ class Ghost
 //        newVel.x = -1;
 //        newVel.y = 0;
         turnTo = new PVector(0,-1);
+        Lampjes |= (1L<<(LinksToetsen[3]-TranslationConstance));
 //        vel = new PVector(0,-1);
 //        pos.add(vel);
         if (checkDir())
@@ -1800,6 +1844,7 @@ class Ghost
 //        newVel.x = 1;
 //        newVel.y = 0;
         turnTo = new PVector(0,1);
+        Lampjes |= (1L<<(RechtsToetsen[3]-TranslationConstance));
 //        vel = new PVector(0,1);
 //        pos.add(vel);
         if (checkDir())
@@ -1809,6 +1854,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = -1;
         turnTo = new PVector(1,0);
+        Lampjes |= (1L<<(PlusToetsen[3]-TranslationConstance));
 //        vel = new PVector(1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1818,6 +1864,7 @@ class Ghost
 //        newVel.x = 0;
 //        newVel.y = 1;
         turnTo = new PVector(-1,0);
+        Lampjes |= (1L<<(MinToetsen[3]-TranslationConstance));
 //        vel = new PVector(-1,0);
 //        pos.add(vel);
         if (checkDir())
@@ -1937,6 +1984,14 @@ class Ghost
                 ghostNodes.add(new Node((Pacman.pos.x-floor(width/112)) / floor(width/(2*28)), (Pacman.pos.y-floor(height/62)) / floor(height/31))); // target pacman
               }
             }
+            else {
+              Pacman = Joys[i].AIPacman;
+              if (Pacman != null) {
+                if (Pacman.pos != null) {
+                  ghostNodes.add(new Node((Pacman.pos.x-floor(width/112)) / floor(width/(2*28)), (Pacman.pos.y-floor(height/62)) / floor(height/31))); // target pacman
+                }
+              }
+            }
           }
 //           }
         }
@@ -1965,7 +2020,6 @@ class Ghost
     for (int i=0;i<4;i++)
     {
      PacMan Pacman = null;
-     
      if (Joys[i]!=null) {
        Pacman = Joys[i].PlayerIsPacman;
      
@@ -1982,6 +2036,23 @@ class Ghost
           }
 //        }
        }
+       else {
+         Pacman = Joys[i].AIPacman;
+         if (Pacman != null)
+         {
+          if (Pacman.hitPacman(pos)) { // if hit pacman
+//            if (Joys[i].PlayerIsGhost != null) {
+              if (frightened) { // eaten by pacman
+                returnHome = true;
+                frightened = false;
+              } else if (!returnHome) { // killPacman
+                Pacman.kill();
+              }
+            }
+//          }
+         }
+       }
+         
      }
     }
 
@@ -2086,10 +2157,12 @@ class Ghost
     }
 //    return(true);
   }
+  
 }
 
 class Joystick {
   PacMan    PlayerIsPacman = null;
+  PacMan    AIPacman = null;
   Ghost     PlayerIsGhost = null;
   Ghost     AIGhost = null;
   Highscore Highscore = null;
@@ -2101,6 +2174,7 @@ class Joystick {
     PlayerIsPacman = tPacMan;
     PlayerIsGhost = tGhost;
     AIGhost = null;
+    AIPacman = null;
     Color = tColor;
     Highscore = null;
     Menu = null;
@@ -2121,7 +2195,12 @@ class Joystick {
           AIGhost.Display();
         }
         else {
-         println("Initialisatiefout Display!");
+          if (AIPacman != null) {
+            AIPacman.Display();
+          }
+          else {
+            println("Initialisatiefout Display!");
+          }
         }
       }
     }
@@ -2140,11 +2219,17 @@ class Joystick {
           AIGhost.Update();
         }
         else {
-          println("Initialisatiefout Update!");
+          if (AIPacman != null) {
+            AIPacman.Update();
+          }
+          else {
+            println("Initialisatiefout Update!");
+          }
         }
       }
     }
   }
+
 }
 
 Joystick joy1 = null;
