@@ -1,7 +1,7 @@
 /****************************/
 /* Arcade 4 - Player PacMan */
 /****************************/
-/*  (c)  2022  AssortiMens  */
+/*(c) 2022-2023  AssortiMens*/
 /*                          */
 /*    (w)  William  Senn    */
 /*                          */
@@ -189,6 +189,102 @@ void setup()
   saveHighscores();
   
   TitleSong.loop();
+}
+
+int Lampjes = 0;
+
+String TestBuffer = "w 255 255 255\n\r";
+String TestBuffer2 = "w 255 255 255\n\r";
+int OldCode = 0;
+
+void ser_Build_Msg_String_And_Send(int tCode)
+{
+  char msgchars[] = {'w',' ','2','5','5',' ','2','5','5',' ','2','5','5','\n','\r','\0'};
+  char FastHex[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+  char header = 'w';
+  char delimiter = ' ';
+  int  msb = 0;
+  int  hsb = 0;
+  int  lsb = 0;
+  char eos1 = '\n';
+  char eos2 = '\r';
+  char eos3 = (char)'\0';
+  int numKars = 0;
+  boolean msbwasgroter = false;
+  boolean hsbwasgroter = false;
+  boolean lsbwasgroter = false;
+  int len = 0;
+
+  if (tCode != OldCode) {
+    msgchars = TestBuffer.toCharArray();
+    msb = ((((tCode)&0xff0000)>>16));
+    hsb = ((((tCode)&0x00ff00)>>8));
+    lsb = ((((tCode)&0x0000ff)>>0));
+    numKars = 0;
+    msgchars[numKars++] = header;
+    msgchars[numKars++] = delimiter;
+    if ((msb) >= 0x64) {
+      msgchars[numKars++] = FastHex[msb / 0x64];
+      msbwasgroter = true;
+    }
+    else {
+      msbwasgroter = false;
+    }
+    msb %= 0x64;
+    if (((msb) >= 0x0a) || (msbwasgroter)) {
+      msgchars[numKars++] = FastHex[msb / 0x0a];
+    }
+    msb %= 0x0a;
+    msgchars[numKars++] = FastHex[msb];
+    msgchars[numKars++] = delimiter;
+    if ((hsb) >= 0x64) {
+      msgchars[numKars++] = FastHex[hsb / 0x64];
+      hsbwasgroter = true;
+    }
+    else {
+      hsbwasgroter = false;
+    }
+    hsb %= 0x64;
+    if (((hsb) >= 0x0a) || (hsbwasgroter)) {
+      msgchars[numKars++] = FastHex[hsb / 0x0a];
+    }
+    hsb %= 0x0a;
+    msgchars[numKars++] = FastHex[hsb];
+    msgchars[numKars++] = delimiter;
+    if ((lsb) >= 0x64) {
+      msgchars[numKars++] = FastHex[lsb / 0x64];
+      lsbwasgroter = true;
+    }
+    else {
+      lsbwasgroter = false;
+    }
+    lsb %= 0x64;
+    if (((lsb) >= 0x0a) || (lsbwasgroter)) {
+      msgchars[numKars++] = FastHex[lsb / 0x0a];
+    }
+    lsb %= 0x0a;
+    msgchars[numKars++] = (char)FastHex[lsb];
+    msgchars[numKars++] = (char)eos1;
+    msgchars[numKars++] = (char)eos2;
+    msgchars[numKars] = (char)eos3;
+
+    len = numKars;
+
+    TestBuffer = (String.valueOf(msgchars));
+    TestBuffer2 = TestBuffer.substring(0,len);
+//    print(TestBuffer2); //.substring(0,len));
+    for (int i = 0; i < len; i++) {
+//      print(msgchars[i]);
+
+// /*
+
+      serial.write((byte)(msgchars[i]));
+
+// */
+
+    }
+    OldCode = tCode;
+  }
 }
 
 void InitialiseAllVariables()
@@ -552,17 +648,77 @@ void draw()
 
   if ((frameCounter >= 12000) && (!GameOver) && (ValidCombi == true))
     {
-      perFrameGame();
+      if (fc_now == 0)
+        perFrameGame();
+
       if (GameOver)
         {
           // check highscore
+
+
+
+          fc_now = frameCounter;
+
+          if (joy3.PlayerIsPacman != null)
+            joy3.Highscore = new Highscore(joy3.PlayerIsPacman.score,0,true);
+          else
+            joy3.Highscore = new Highscore(0,0,false);
+
+          if (joy4.PlayerIsPacman != null)
+            joy4.Highscore = new Highscore(joy4.PlayerIsPacman.score,1,true);
+          else
+            joy4.Highscore = new Highscore(0,1,false);
+
+          if (joy1.PlayerIsPacman != null)
+            joy1.Highscore = new Highscore(joy1.PlayerIsPacman.score,2,true);
+          else
+            joy1.Highscore = new Highscore(0,2,false);
+
+          if (joy2.PlayerIsPacman != null)
+            joy2.Highscore = new Highscore(joy2.PlayerIsPacman.score,3,true);
+          else
+            joy2.Highscore = new Highscore(0,3,false);
+
+/*
           frameCounter = 0; // reset!!
+          fc_now = frameCounter;
           GameOver = false;
           InitialiseAllVariables(); // soort reset
           initGame();
+*/
         }
     }    
 
+  if ((fc_now != 0) && (frameCounter >= fc_now) && (frameCounter < (fc_now + 10000)))
+  { // display GameOver or Highscores?!
+  
+    background(0);
+    
+    joy1.Highscore.Display();
+    joy2.Highscore.Display();
+    joy4.Highscore.Display();
+    joy3.Highscore.Display();
+
+    DisplayCountdown(10000-(frameCounter-fc_now));
+    
+    joy3.Highscore.Update();
+    joy4.Highscore.Update();
+    joy1.Highscore.Update();
+    joy2.Highscore.Update();
+  }
+
+  if ((fc_now != 0) && (frameCounter >= (fc_now + 10000)))
+  {
+
+    saveHighscores();
+    
+    frameCounter = 0; // reset after Highscores
+    fc_now = frameCounter;
+    GameOver = false;
+    InitialiseAllVariables();
+    initGame();
+  }
+  
   ser_Build_Msg_String_And_Send(Lampjes);
   
   frameCounter++;
@@ -575,6 +731,22 @@ void draw()
 //       InitialiseAllVariables();
 //       initGame();
      }
+}
+
+int fc_now = 0;
+
+void DisplayCountdown(int CountDown)
+{
+  pushMatrix();
+  translate(width/2,height/2);
+  rotate(radians(TextAngle));
+  TextAngle++;
+  TextAngle %= 360;
+  textAlign(CENTER,CENTER);
+  textSize(20);
+  fill(255);
+  text(CountDown,0,0);
+  popMatrix();
 }
 
 int ChosenOne[] = { 0,0,0,0 };
@@ -666,102 +838,6 @@ void initGame() {
 //  Clyde = new Ghost((int)((15+28)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,0,255,255));
 }
 
-int Lampjes = 0;
-
-String TestBuffer = "w 255 255 255\n\r";
-String TestBuffer2 = "w 255 255 255\n\r";
-int OldCode = 0;
-
-void ser_Build_Msg_String_And_Send(int tCode)
-{
-  char msgchars[] = {'w',' ','2','5','5',' ','2','5','5',' ','2','5','5','\n','\r','\0'};
-  char FastHex[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-  char header = 'w';
-  char delimiter = ' ';
-  int  msb = 0;
-  int  hsb = 0;
-  int  lsb = 0;
-  char eos1 = '\n';
-  char eos2 = '\r';
-  char eos3 = (char)'\0';
-  int numKars = 0;
-  boolean msbwasgroter = false;
-  boolean hsbwasgroter = false;
-  boolean lsbwasgroter = false;
-  int len = 0;
-
-  if (tCode != OldCode) {
-    msgchars = TestBuffer.toCharArray();
-    msb = ((((tCode)&0xff0000)>>16));
-    hsb = ((((tCode)&0x00ff00)>>8));
-    lsb = ((((tCode)&0x0000ff)>>0));
-    numKars = 0;
-    msgchars[numKars++] = header;
-    msgchars[numKars++] = delimiter;
-    if ((msb) >= 0x64) {
-      msgchars[numKars++] = FastHex[msb / 0x64];
-      msbwasgroter = true;
-    }
-    else {
-      msbwasgroter = false;
-    }
-    msb %= 0x64;
-    if (((msb) >= 0x0a) || (msbwasgroter)) {
-      msgchars[numKars++] = FastHex[msb / 0x0a];
-    }
-    msb %= 0x0a;
-    msgchars[numKars++] = FastHex[msb];
-    msgchars[numKars++] = delimiter;
-    if ((hsb) >= 0x64) {
-      msgchars[numKars++] = FastHex[hsb / 0x64];
-      hsbwasgroter = true;
-    }
-    else {
-      hsbwasgroter = false;
-    }
-    hsb %= 0x64;
-    if (((hsb) >= 0x0a) || (hsbwasgroter)) {
-      msgchars[numKars++] = FastHex[hsb / 0x0a];
-    }
-    hsb %= 0x0a;
-    msgchars[numKars++] = FastHex[hsb];
-    msgchars[numKars++] = delimiter;
-    if ((lsb) >= 0x64) {
-      msgchars[numKars++] = FastHex[lsb / 0x64];
-      lsbwasgroter = true;
-    }
-    else {
-      lsbwasgroter = false;
-    }
-    lsb %= 0x64;
-    if (((lsb) >= 0x0a) || (lsbwasgroter)) {
-      msgchars[numKars++] = FastHex[lsb / 0x0a];
-    }
-    lsb %= 0x0a;
-    msgchars[numKars++] = (char)FastHex[lsb];
-    msgchars[numKars++] = (char)eos1;
-    msgchars[numKars++] = (char)eos2;
-    msgchars[numKars] = (char)eos3;
-
-    len = numKars;
-
-    TestBuffer = (String.valueOf(msgchars));
-    TestBuffer2 = TestBuffer.substring(0,len);
-//    print(TestBuffer2); //.substring(0,len));
-    for (int i = 0; i < len; i++) {
-//      print(msgchars[i]);
-
-// /*
-
-      serial.write((byte)(msgchars[i]));
-
-// */
-
-    }
-    OldCode = tCode;
-  }
-}
-
 void PCM_Demo1()
 {
   background(0);
@@ -794,7 +870,7 @@ void PCM_Demo1()
   fill(TextKleur);
   text("AssortiMens presents",0,-50);
   text("Four Player PacMan",0,0);
-  text("© 2022",0,50);
+  text("© 2022-2023",0,50);
 
   fill(255);
   text("Press a key to play!",0,230-55);
@@ -2354,15 +2430,15 @@ class Highscore {
     Joys[2]=joy1;
     Joys[3]=joy2;
     for (int i=0;i<40;i++) { // 8;i++) {
-      if (Score > Highscores[i]) {
+      if (Score > Highscores[i+10]) {
         for(int j=38;j>=i;j--) { // 6;j>=i;j--) {
-          CrownLijst[j+1]=CrownLijst[j];
-          Highscores[j+1]=Highscores[j];
-          NaamLijst[j+1]=NaamLijst[j];
+          CrownLijst[j+11]=CrownLijst[j+10];
+          Highscores[j+11]=Highscores[j+10];
+          NaamLijst[j+11]=NaamLijst[j+10];
         }
-        CrownLijst[i]=((Crown)?"P":"G");
-        Highscores[i]=Score;
-        NaamLijst[i]=Naam[playerX];
+        CrownLijst[i+10]=((Crown)?"P":"G");
+        Highscores[i+10]=Score;
+        NaamLijst[i+10]=Naam[playerX];
         CursorY = i;
         for (int k=0;k<playerX;k++) {
           if ((Joys[k].Highscore != null)&&((CursorY) <= (Joys[k].Highscore.CursorY))) {
@@ -2383,7 +2459,7 @@ class Highscore {
   Joys[1] = joy4;
   Joys[2] = joy1;
   Joys[3] = joy2;
-  for (i=0;i<8;i++) {
+  for (i=(CursorY-4);i<(CursorY-4+8);i++) {
     pushMatrix();
     translate(((width/2)-(((width-320)/2)*(Joys[playerX].yOrient))),((height/2)-(((height-320)/2)*(Joys[playerX].xOrient))));
     rotate(radians(PlayerAngle[playerX]));
@@ -2391,14 +2467,17 @@ class Highscore {
     fill(((HumanPlayer[playerX] == true)&&(Joys[playerX].Highscore != null)&&((CursorY) == i))?(Joys[playerX].Color):(color(255,255,255)));
 
     textSize(20);
-    textAlign(LEFT,CENTER);
-    text(Order[i],-120,20*i);
-    textAlign(LEFT,CENTER);
-    text(NaamLijst[i],-90,20*i);
-    textAlign(RIGHT,CENTER);
-    text(Highscores[i],120,20*i);
-    textAlign(CENTER,CENTER);
-    text(CrownLijst[i],140,20*i);
+    if (Highscores[i+10] != 0)
+     {
+      textAlign(LEFT,CENTER);
+      text(Order[i+10],-120,20*((i-CursorY+4)+25));
+      textAlign(LEFT,CENTER);
+      text(NaamLijst[i+10],-90,20*((i-CursorY+4)+25));
+      textAlign(RIGHT,CENTER);
+      text(Highscores[i+10],120,20*((i-CursorY+4)+25));
+      textAlign(CENTER,CENTER);
+      text(CrownLijst[i+10],140,20*((i-CursorY+4)+25));
+     }
     popMatrix();
   }
  }
@@ -2589,7 +2668,7 @@ class Highscore {
     }
   }
   else {
-    NaamLijst[CursorY] = String.valueOf(chars);
+    NaamLijst[CursorY+10] = String.valueOf(chars);
   }
  }
 }
