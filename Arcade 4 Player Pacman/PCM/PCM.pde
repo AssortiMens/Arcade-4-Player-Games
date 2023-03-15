@@ -2358,8 +2358,6 @@ String CrownLijst[] = {" "," "," "," "," "," "," "," "," "," ",
 int Offset1 = 0;
 int Offset2 = 0;
 
-int PlayerAngle[] = {0,270,180,90};
-
 String Naam[] = {"Player 1  ","Player 2  ","Player 3  ","Player 4  "};
 char KarakterSet[] = {'A','B','C','D','E','F','G','H','I','J','K','L','M',
                       'N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
@@ -2367,6 +2365,8 @@ char KarakterSet[] = {'A','B','C','D','E','F','G','H','I','J','K','L','M',
                       'n','o','p','q','r','s','t','u','v','w','x','y','z',
                       '0','1','2','3','4','5','6','7','8','9','-','+','_',
                       '=','.','(',',',')',';',':','<','>','?',' ','@','!'};
+
+int PlayerAngle[] = { 0, 270, 180, 90 };
 
 boolean Once[] = {false,false,false,false};
 boolean CollectedFireButtons[] = {false,false,false,false};
@@ -2392,10 +2392,10 @@ class Highscore {
   boolean Crown = false;
   boolean RepKey[] = {false,false,false,false,false};
   
-  Highscore(int tScore, int tplayerX, boolean tCrown) {
+  Highscore(int tScore, int tPlayerX, boolean tCrown) {
 
    Score = tScore;
-   playerX = tplayerX;
+   playerX = tPlayerX;
    CursorX = 0;
    CursorY = 0;
    KarCount = 0;
@@ -2452,17 +2452,18 @@ class Highscore {
   }
 
  void Display() {
-  int i;
   Joystick Joys[] = {joy3,joy4,joy1,joy2};
   
   Joys[0] = joy3;
   Joys[1] = joy4;
   Joys[2] = joy1;
   Joys[3] = joy2;
-  for (i=(CursorY-4);i<(CursorY-4+8);i++) {
-    pushMatrix();
-    translate(((width/2)-(((width-320)/2)*(Joys[playerX].yOrient))),((height/2)-(((height-320)/2)*(Joys[playerX].xOrient))));
-    rotate(radians(PlayerAngle[playerX]));
+
+  pushMatrix();
+  textAlign(CENTER,CENTER);
+  translate(((width / 2) - (( width / 4) * (sin(radians(PlayerAngle[playerX]))))),(( height / 2) + (( height / 4) * (cos(radians(PlayerAngle[playerX]))))));
+  rotate(radians(PlayerAngle[playerX]));
+  for (int i=(CursorY-4);i<(CursorY-4+8);i++) {
 
     fill(((HumanPlayer[playerX] == true)&&(Joys[playerX].Highscore != null)&&((CursorY) == i))?(Joys[playerX].Color):(color(255,255,255)));
 
@@ -2470,16 +2471,16 @@ class Highscore {
     if (Highscores[i+10] != 0)
      {
       textAlign(LEFT,CENTER);
-      text(Order[i+10],-120,20*((i-CursorY+4)+25));
+      text(Order[i+10],-120,20*((i-CursorY+4)));
       textAlign(LEFT,CENTER);
-      text(NaamLijst[i+10],-90,20*((i-CursorY+4)+25));
+      text(NaamLijst[i+10],-90,20*((i-CursorY+4)));
       textAlign(RIGHT,CENTER);
-      text(Highscores[i+10],120,20*((i-CursorY+4)+25));
+      text(Highscores[i+10],120,20*((i-CursorY+4)));
       textAlign(CENTER,CENTER);
-      text(CrownLijst[i+10],140,20*((i-CursorY+4)+25));
+      text(CrownLijst[i+10],140,20*((i-CursorY+4)));
      }
-    popMatrix();
-  }
+   }
+  popMatrix();
  }
 
  void Update()
