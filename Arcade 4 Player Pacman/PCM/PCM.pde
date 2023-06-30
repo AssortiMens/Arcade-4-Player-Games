@@ -65,7 +65,7 @@ int tilesRepresentation[][] = {
 
 int NumKeys = 20; /* 20 voor de kast / Arduino */
 int TotalNumKeys = 120; // Normal keyboard, use 20 out of 120
-int TranslationConstance = 0; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
+int TranslationConstance = 1; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
 int NumKeysPerPlayer = 5;
 
 int LinksToetsen[] =  {TranslationConstance+0,TranslationConstance+5,TranslationConstance+10,TranslationConstance+15};
@@ -111,7 +111,7 @@ void setup()
 
   try {
     println(control.deviceListToText(""));
-    stick = control.getDevice("Arduino Leonardo"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
+    stick = control.getDevice("Keyboard"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
   }
   catch (Exception e) {
     println("No Arduino found or no Toetsenbord/Keyboard configured!");
@@ -163,11 +163,11 @@ void setup()
     System.exit(0);
   }
 
-// /*
+/*
 
   try {
     printArray(Serial.list());
-    serial = new Serial(this, Serial.list()[1], 115200);
+    serial = new Serial(this, Serial.list()[1], 115200); // This should connect to the Arduino UNO for the lights!!
     serial.bufferUntil('\0');
   }
   catch (Exception e) {
@@ -276,7 +276,7 @@ void ser_Build_Msg_String_And_Send(int tCode)
     for (int i = 0; i < len; i++) {
 //      print(msgchars[i]);
 
-// /*
+/*
 
       serial.write((byte)(msgchars[i]));
 
@@ -775,6 +775,7 @@ void initGame() {
         Joys[i].PlayerIsGhost = null;
         Joys[i].AIGhost = null;
         Joys[i].AIPacman = null;
+        Joys[i].PlayerIsPacman.score = 0;
       }
       else // Joys[i] = Ghost
       {
@@ -782,6 +783,7 @@ void initGame() {
         Joys[i].PlayerIsPacman = null;
         Joys[i].AIGhost = null;
         Joys[i].AIPacman = null;
+//        Joys[i].PlayerIsGhost.score = 0;
       }
     }
     else // AI Ghost or AI Pacman
@@ -791,6 +793,7 @@ void initGame() {
         Joys[i].AIGhost = null;
         Joys[i].PlayerIsPacman = null;
         Joys[i].PlayerIsGhost = null;
+        // Joys[i].AIPacman.score = 0;
       }
       else {
         Joys[i].AIGhost = new Ghost((int)((13+(1*(i&2))+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
@@ -799,6 +802,7 @@ void initGame() {
         Joys[i].PlayerIsPacman = null;
         Joys[i].PlayerIsGhost = null;
         Joys[i].AIPacman = null;
+//        Joys[i].AIGhost.score = 0;
       }
     }
      }
@@ -1311,7 +1315,7 @@ class PacMan
 {
   PVector pos = new PVector(1,0); // null; // int x,y;
   int w,h;
-  int score = 0;
+  int score; // int score = 0;
   int lives = 10;
   color Color;
   PVector vel = new PVector(-1,0);
@@ -1326,7 +1330,7 @@ class PacMan
      w = tw;
      h = th;
      Color = tColor;
-     score = 0;
+//     score = 0;
      gameover = false;
    }
 
@@ -1578,6 +1582,7 @@ class Ghost
   PVector pos = new PVector(13*floor(width/(2*28))+floor(width/112),14*floor(height/31)+floor(height/62)); // int x,y;
   int w,h;
   color Color;
+  int score = 0;
 
   boolean returnHome = false;
   boolean chase = true;
@@ -2631,10 +2636,20 @@ class Highscore {
          NumCollectedFireButtons = 0;
 
          for (j=0;j<4;j++) {
-           NumCollectedFireButtons = ((CollectedFireButtons[j])?(NumCollectedFireButtons + 1):(NumCollectedFireButtons));
+           NumCollectedFireButtons = ((CollectedFireButtons[j])?(NumCollectedFireButtons+1):(NumCollectedFireButtons));
           }
-         if (NumCollectedFireButtons == NumHumanPlayers) {
+         if (NumCollectedFireButtons == (NumHumanPlayers-NumGhosts)) { // remove -NumGhosts when ready, please!!! Formula incorrect!
            resetGame = true;
+           if (resetGame==true) {
+             do {
+               ButtonPressed();
+             }
+             while(buttonPressed==true);
+             saveHighscores(); // Might be a timebomb?!
+             frameCounter=0;
+             fc_now=frameCounter;
+             resetGame=false;
+           }
           }
          RepKey[1] = true;
        }
