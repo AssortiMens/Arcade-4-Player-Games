@@ -25,6 +25,7 @@ Serial serial;
 Minim minim;
 
 AudioPlayer TitleSong;
+AudioSample BonusSound;
 
 Tile tiles[][] = new Tile[31][56]; //note it goes y then x because of how I inserted the data
 int tilesRepresentation[][] = { 
@@ -71,7 +72,7 @@ int NumKeysPerPlayer = 5;
 int LinksToetsen[] =  {TranslationConstance+0,TranslationConstance+5,TranslationConstance+10,TranslationConstance+15};
 int VuurKnoppen[] =   {TranslationConstance+1,TranslationConstance+6,TranslationConstance+11,TranslationConstance+16};
 int RechtsToetsen[] = {TranslationConstance+2,TranslationConstance+7,TranslationConstance+12,TranslationConstance+17};
-int PlusToetsen[] =   {TranslationConstance+3,TranslationConstance+(int)8,TranslationConstance+13,TranslationConstance+18};
+int PlusToetsen[] =   {TranslationConstance+3,TranslationConstance+8,TranslationConstance+13,TranslationConstance+18};
 int MinToetsen[] =    {TranslationConstance+4,TranslationConstance+9,TranslationConstance+14,TranslationConstance+19};
 
 int Player;
@@ -121,6 +122,7 @@ void setup()
   try {
     minim = new Minim(this);
     TitleSong = minim.loadFile("data/Popcorn Remix [HD].mp3");
+    BonusSound = minim.loadSample("data/BonusSound.wav"); // used in (Bonus) ToolTips!
   }
   catch (Exception e) {
     println("Can not open Sounds!");
@@ -662,22 +664,34 @@ void draw()
           if (joy3.PlayerIsPacman != null)
             joy3.Highscore = new Highscore(joy3.PlayerIsPacman.score,0,true);
           else
-            joy3.Highscore = new Highscore(0,0,false);
+            if (joy3.PlayerIsGhost != null)
+              joy3.Highscore = new Highscore(joy3.PlayerIsGhost.score,0,false);
+            else
+              joy3.Highscore = new Highscore(joy3.AIGhost.score,0,false);
 
           if (joy4.PlayerIsPacman != null)
             joy4.Highscore = new Highscore(joy4.PlayerIsPacman.score,1,true);
           else
-            joy4.Highscore = new Highscore(0,1,false);
+            if (joy4.PlayerIsGhost != null)
+              joy4.Highscore = new Highscore(joy4.PlayerIsGhost.score,1,false);
+            else
+              joy4.Highscore = new Highscore(joy4.AIGhost.score,1,false);
 
           if (joy1.PlayerIsPacman != null)
             joy1.Highscore = new Highscore(joy1.PlayerIsPacman.score,2,true);
           else
-            joy1.Highscore = new Highscore(0,2,false);
+            if (joy1.PlayerIsGhost != null)
+              joy1.Highscore = new Highscore(joy1.PlayerIsGhost.score,2,false);
+            else
+              joy1.Highscore = new Highscore(joy1.AIGhost.score,2,false);
 
           if (joy2.PlayerIsPacman != null)
             joy2.Highscore = new Highscore(joy2.PlayerIsPacman.score,3,true);
           else
-            joy2.Highscore = new Highscore(0,3,false);
+            if (joy2.PlayerIsGhost != null)
+              joy2.Highscore = new Highscore(joy2.PlayerIsGhost.score,3,false);
+            else
+              joy2.Highscore = new Highscore(joy2.AIGhost.score,3,false);
 
 /*
           frameCounter = 0; // reset!!
@@ -763,6 +777,8 @@ void initGame() {
   Joys[2] = joy1;
   Joys[3] = joy2;
 
+  BonusMultiplier = 1;
+
   for (int i=0;i<4;i++)
   {
     if (Joys[i] != null)
@@ -783,7 +799,7 @@ void initGame() {
         Joys[i].PlayerIsPacman = null;
         Joys[i].AIGhost = null;
         Joys[i].AIPacman = null;
-//        Joys[i].PlayerIsGhost.score = 0;
+        Joys[i].PlayerIsGhost.score = 0;
       }
     }
     else // AI Ghost or AI Pacman
@@ -793,7 +809,7 @@ void initGame() {
         Joys[i].AIGhost = null;
         Joys[i].PlayerIsPacman = null;
         Joys[i].PlayerIsGhost = null;
-        // Joys[i].AIPacman.score = 0;
+        Joys[i].AIPacman.score = 0;
       }
       else {
         Joys[i].AIGhost = new Ghost((int)((13+(1*(i&2))+(28*(i&1)))*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),32,32,Joys[i].Color);
@@ -802,7 +818,7 @@ void initGame() {
         Joys[i].PlayerIsPacman = null;
         Joys[i].PlayerIsGhost = null;
         Joys[i].AIPacman = null;
-//        Joys[i].AIGhost.score = 0;
+        Joys[i].AIGhost.score = 0;
       }
     }
      }
@@ -840,7 +856,8 @@ void initGame() {
 
 //  Pinky = new Ghost((int)((13)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,255,255,255));
 //  Clyde = new Ghost((int)((15+28)*(width/56)+((width/112))),(int)(14*(height/31)+((height/62))),34,34,color(0,0,255,255));
-}
+
+} // End of initGame()
 
 void PCM_Demo1()
 {
@@ -1330,7 +1347,7 @@ class PacMan
      w = tw;
      h = th;
      Color = tColor;
-//     score = 0;
+     score = 0;
      gameover = false;
    }
 
@@ -1462,10 +1479,10 @@ class PacMan
 
       // reset all the paths for all the ghosts
 
-      Blinky.setPath();
-      Pinky.setPath();
-      Clyde.setPath();
-      Inky.setPath();
+//      Blinky.setPath();
+//      Pinky.setPath();
+//      Clyde.setPath();
+//      Inky.setPath();
       Joystick Joys[] = {joy3,joy4,joy1,joy2};
       Joys[0] = joy3;
       Joys[1] = joy4;
@@ -1475,6 +1492,8 @@ class PacMan
         if (Joys[i].PlayerIsGhost != null) {
           Joys[i].PlayerIsGhost.setPath();
         }
+        if (Joys[i].AIGhost != null)
+          Joys[i].AIGhost.setPath();
       }
       
       // check if the position has been eaten or not, note the blank spaces are initialised as already eaten
@@ -1482,6 +1501,7 @@ class PacMan
       if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten) {
         tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true;
         score += 1; //add a point
+        println("Score:", score);
         if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // if big dot eaten
           // set all ghosts to frightened
           Blinky.frightened = true;
@@ -1501,6 +1521,10 @@ class PacMan
             if (Joys[i].PlayerIsGhost != null) {
               Joys[i].PlayerIsGhost.frightened = true;
               Joys[i].PlayerIsGhost.flashCount = 0;
+            }
+            if (Joys[i].AIGhost != null) {
+              Joys[i].AIGhost.frightened = true;
+              Joys[i].AIGhost.flashCount = 0;
             }
           }
         }
@@ -1546,6 +1570,10 @@ class PacMan
                 Joys[i].PlayerIsGhost.frightened = true;
                 Joys[i].PlayerIsGhost.flashCount = 0;
               }
+              if (Joys[i].AIGhost != null) {
+                Joys[i].AIGhost.frightened = true;
+                Joys[i].AIGhost.flashCount = 0;
+              }
             }
           }
         }
@@ -1576,6 +1604,8 @@ class PacMan
    }
    
 }
+
+int BonusMultiplier = 1;
 
 class Ghost
 {
@@ -1609,7 +1639,9 @@ class Ghost
 
      setPath();
    }
-   
+
+  BonusToolTip bonus = null;
+
   void Display()
    {
 //     fill(Color);
@@ -1641,6 +1673,19 @@ class Ghost
         if (returnHome) { // have the ghost be transparent if on its way home
           stroke(Color, 100); 
           fill(Color, 100);
+          if (bonus == null)
+          {
+            bonus = new BonusToolTip(Color, (BonusMultiplier * 200), pos.x, pos.y);
+            score = (BonusMultiplier * 200);
+            println("Ghost Score:", score);
+            BonusMultiplier++;
+          }
+          if (bonus != null)
+           {
+             bonus.Display();
+             bonus.Update();
+             fill(Color,100);
+           }
         } else { // colour the ghost
           stroke(Color);
           fill(Color);
@@ -2145,6 +2190,7 @@ class Ghost
         returnHome = false;
         deadForABit = true;
         deadCount = 0;
+        bonus = null;
       }
     }
 
