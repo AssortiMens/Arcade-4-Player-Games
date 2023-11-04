@@ -453,7 +453,7 @@ int TextSize = 20;
 int TextAngle = 0;
 int frameCounter = 0;
 PImage PacmanField;
-//PImage PacmanSprite;
+//PImage PacmanSprite[][];
 boolean GameOver = false;
 
 //Ghost Inky; // = new Ghost(100,100,44,44,color(255,0,0,255));
@@ -650,8 +650,10 @@ void draw()
 
   if ((frameCounter >= 12000) && (!GameOver) && (ValidCombi == true))
     {
-      if (fc_now == 0)
+      if (fc_now == 0) {
+        background(0);
         perFrameGame();
+      }
 
       if (GameOver)
         {
@@ -1469,7 +1471,7 @@ class PacMan
       pos.add(vel);
     }
      
-   }
+   } // end of Pacman.Update()
    
   boolean checkPosition()
    {
@@ -1676,8 +1678,34 @@ class Ghost
           if (bonus == null)
           {
             bonus = new BonusToolTip(Color, (BonusMultiplier * 200), pos.x, pos.y);
-            score = (BonusMultiplier * 200);
+            score += (BonusMultiplier * 200);
             println("Ghost Score:", score);
+            Joystick Joys[] = {joy3,joy4,joy1,joy2};
+            Joys[0]=joy3;
+            Joys[1]=joy4;
+            Joys[2]=joy1;
+            Joys[3]=joy2;
+            for (int i=0;i<4;i++) {
+              if (Joys[i] != null) {
+                if (Joys[i].PlayerIsPacman != null) {
+                  if (NumPacMans == 1) {
+                    Joys[i].PlayerIsPacman.score += score;
+                    continue;
+                  }
+                  else {
+                    if (NumPacMans == 2) { // which pacman has the bonus?
+                      if ((dist(pos.x,pos.y,Joys[i].PlayerIsPacman.pos.x,Joys[i].PlayerIsPacman.pos.y) < 5)) // pos.x == Joys[i].PlayerIsPacman.pos.x) && (pos.y == Joys[i].PlayerIsPacman.pos.y))
+                        {
+                        Joys[i].PlayerIsPacman.score += score;
+                        }
+                      else {
+                        // do nothing here, but we do need an error margin
+                      }
+                    }
+                  }
+                }
+              }
+            }
             BonusMultiplier++;
           }
           if (bonus != null)
@@ -2294,6 +2322,7 @@ class Joystick {
   Ghost     AIGhost = null;
   Highscore Highscore = null;
   Menu      Menu = null;
+  int       Angle = 0;
   int       xOrient,yOrient;
   color     Color = color(255);
 
