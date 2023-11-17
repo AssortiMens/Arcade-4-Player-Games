@@ -482,6 +482,8 @@ int CyclicBuffer[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,
                       -1,-2,-4,-8,-16,-32,-64,-128,-256,-512,-1024,-2048,-4096,-8192,
                       -16384,-32768,-65536,-131072,-262144,-524288,-1048576};
 
+long Masks[] = {0x000fffe0,0x000ffc1f,0x000f83ff,0x00007fff};
+
 boolean ValidCombi = false;
 
 void draw()
@@ -489,7 +491,22 @@ void draw()
   if (frameCounter < 10000)
     Lampjes = CalcLicht(); //int(random(1048576));
   else
-    Lampjes = 0;
+   {
+    if ((frameCounter >= 10000) && (frameCounter < 11000))
+     {
+      Lampjes = (((((frameCounter-10000)/8)%2)==1)?(0):(-1)); // int(-1 * int(((frameCounter-10000) / 4) % 2));
+      Lampjes &= 1048575;
+      for(int s=0;s<4;s++) {
+        if (HumanPlayer[(s & 3)] == true) {
+          Lampjes &= (Masks[(s & 3)]);
+        }
+      }
+     }
+    else
+     {
+      Lampjes = 0;
+     }
+   }
 
   if ((frameCounter >= 0) && (frameCounter < 1000))
     PCM_Demo1();
