@@ -654,8 +654,11 @@ void draw()
       translate(width/2,height/2);
       rotate(radians(TextAngle++));
       TextAngle %= 360;
-      text("Player(s) get ready!",0,0);
+      text("Player(s), get ready!",0,20);
       popMatrix();
+      
+      DisplayCountdown(12000-frameCounter);
+      
     }
     
   if ((frameCounter == 12000) && (!GameOver) && (ValidCombi == true))
@@ -768,13 +771,15 @@ void draw()
 
 int fc_now = 0;
 
+int CountdownHoek = 0;
+
 void DisplayCountdown(int CountDown)
 {
   pushMatrix();
   translate(width/2,height/2);
-  rotate(radians(TextAngle));
-  TextAngle++;
-  TextAngle %= 360;
+  rotate(radians(CountdownHoek));
+  CountdownHoek--; // TextAngle++;
+  CountdownHoek %= 360; // TextAngle %= 360;
   textAlign(CENTER,CENTER);
   textSize(20);
   fill(255);
@@ -1306,7 +1311,9 @@ Path AStar(Node start, Node finish, PVector vel)
               max = sorting.get(i).distance + sorting.get(i).distToFinish;
             }
           }
-          big.addFirst(sorting.remove(iMax).clone()); // add it to the front so that the ones with the greatest distance end up at the back
+//          big.addFirst(sorting.remove(iMax).clone()); // add it to the front so that the ones with the greatest distance end up at the back
+          big.addFirst(sorting.get(iMax));
+          sorting.remove(iMax);
           // and the closest ones end up at the front
         }
       }
@@ -1322,8 +1329,8 @@ Path AStar(Node start, Node finish, PVector vel)
         return winningPath.clone();
       }
     }
-  }
-}
+  } // End while(true)
+} // End of AStar()
 
 // returns the nearest non wall tile to the input vector
 // input is in tile coordinates
@@ -1520,7 +1527,7 @@ class PacMan
       if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten) {
         tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true;
         score += 1; //add a point
-        println("Score:", score);
+        println(this," Score: ", score);
         if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // if big dot eaten
           // set all ghosts to frightened
           Blinky.frightened = true;
@@ -1568,7 +1575,7 @@ class PacMan
         if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten ) { // if that tile has not been eaten 
           tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true; // eat it
           score += 1;
-          println("Score:", score);
+          println(this," Score: ", score);
           if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // big dot eaten
             // set all ghosts as frightened
             Blinky.frightened = true;
@@ -1607,7 +1614,7 @@ class PacMan
 
   void kill()
    {
-     lives--;
+     lives--; // respond with pos reset?!
      if (lives == 0) {
        gameover = true;
        GameOver = true;
@@ -1622,7 +1629,7 @@ class PacMan
     return false;
    }
    
-}
+} // End of class Pacman
 
 int BonusMultiplier = 1;
 
@@ -1695,8 +1702,8 @@ class Ghost
           if (bonus == null)
           {
             bonus = new BonusToolTip(Color, (BonusMultiplier * 200), pos.x, pos.y);
-            score += (BonusMultiplier * 200);
-            println("Ghost Score:", score);
+            score = (BonusMultiplier * 200); // was score += (BonusMultiplier * 200);
+            println(this," Ghost Score: ", score);
             Joystick Joys[] = {joy3,joy4,joy1,joy2};
             Joys[0]=joy3;
             Joys[1]=joy4;
@@ -1711,12 +1718,13 @@ class Ghost
                   }
                   else {
                     if (NumPacMans == 2) { // which pacman has the bonus?
-                      if ((dist(pos.x,pos.y,Joys[i].PlayerIsPacman.pos.x,Joys[i].PlayerIsPacman.pos.y) < 5)) // pos.x == Joys[i].PlayerIsPacman.pos.x) && (pos.y == Joys[i].PlayerIsPacman.pos.y))
-                        {
-                        Joys[i].PlayerIsPacman.score += score;
+                      if ((dist(pos.x, pos.y, Joys[i].PlayerIsPacman.pos.x, Joys[i].PlayerIsPacman.pos.y) < 10)) // pos.x == Joys[i].PlayerIsPacman.pos.x) && (pos.y == Joys[i].PlayerIsPacman.pos.y))
+                        { // Perhaps we should find a solution which uses hitpacman() ?!
+                          Joys[i].PlayerIsPacman.score += score;
+                          continue;
                         }
                       else {
-                        // do nothing here, but we do need an error margin
+                        ; // do nothing here, but we do need an error margin
                       }
                     }
                   }
@@ -1755,7 +1763,7 @@ class Ghost
       }
       ellipse(pos.x,pos.y,w,h);
     }
-   }
+   } // End of Ghost.Display()
    
   void Update()
    {
@@ -2055,7 +2063,7 @@ class Ghost
 //     }
 //     checkDirection();
     }
-   }
+   }  // End of Ghost.Update()
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2096,7 +2104,7 @@ class Ghost
         return(true);
       }
     }
-  }
+  } // End of Ghost.checkDir()
   
   // calculates a path from the first node in ghost nodes to the last node in ghostNodes and sets it as best path
 
@@ -2109,7 +2117,7 @@ class Ghost
     if (temp != null) { // if not path is found then dont change bestPath
       bestPath = temp.clone();
     }
-  }
+  } // End of Ghost.setPath()
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   // sets all the nodes and connects them with adjacent nodes 
@@ -2175,7 +2183,7 @@ class Ghost
     for (int i = 0; i < ghostNodes.size(); i++) { // connect all the nodes together
       ghostNodes.get(i).addEdges(ghostNodes);
     }
-  }
+  } // End of Ghost.setNodes()
 
   //--------------------------------------------------------------------------------------------------------------------------------------------------
   // check if the ghost needs to change direction as well as other stuff
@@ -2191,7 +2199,7 @@ class Ghost
     for (int i=0;i<4;i++)
     {
      PacMan Pacman = null;
-     if (Joys[i]!=null) {
+     if (Joys[i] != null) {
        Pacman = Joys[i].PlayerIsPacman;
      
        if (Pacman != null)
@@ -2330,7 +2338,7 @@ class Ghost
 //    return(true);
   }
   
-}
+}  // End of class Ghost
 
 class Joystick {
   PacMan    PlayerIsPacman = null;
@@ -2403,7 +2411,7 @@ class Joystick {
     }
   }
 
-}
+} // End of class Joystick
 
 Joystick joy1 = null;
 Joystick joy2 = null;
