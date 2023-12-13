@@ -1325,7 +1325,7 @@ class PacMan
   void Display()
   {
     fill(Color);
-    if (!JustEaten) {
+    if (((JustEaten)&&((frameCounter & 1) == 0)) || (!JustEaten)) {
       //     println(int(atan2(vel.y,vel.x)/HALF_PI)+1);
       switch(int(atan2(vel.y, vel.x)/HALF_PI)+1)
       {
@@ -1333,7 +1333,7 @@ class PacMan
         pushMatrix();
         translate(pos.x, pos.y);
         rotate(-HALF_PI);
-        arc(0, 0, w, h, radians(-150), radians(150), 0);
+        arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
         println("down"); // debug info
         break;
@@ -1341,7 +1341,7 @@ class PacMan
         pushMatrix();
         translate(pos.x, pos.y);
         rotate(0);
-        arc(0, 0, w, h, radians(-150), radians(150), 0);
+        arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
         println("left"); // debug info
         break;
@@ -1349,7 +1349,7 @@ class PacMan
         pushMatrix();
         translate(pos.x, pos.y);
         rotate(HALF_PI);
-        arc(0, 0, w, h, radians(-150), radians(150), 0);
+        arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
         println("up"); // debug info
         break;
@@ -1357,15 +1357,17 @@ class PacMan
         pushMatrix();
         translate(pos.x, pos.y);
         rotate(PI);
-        arc(0, 0, w, h, radians(-150), radians(150), 0);
+        arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
         println("right"); // debug info
         break;
       }
     }
     else { //if (JustEaten) {
-      ellipse(pos.x, pos.y, w, h);
-      JustEaten = false;
+      if ((JustEaten)&&(frameCounter & 1) == 1)
+        ellipse(pos.x, pos.y, w*PFScaleX, h*PFScaleY);
+      if ((JustEaten)&&(frameCounter & 15) == 7)
+        JustEaten = false;
     }
   }
 
@@ -1749,7 +1751,7 @@ class Ghost
           fill(0, 0, 200);
         }
       }
-      ellipse(pos.x, pos.y, w, h);
+      ellipse(pos.x, pos.y, w*PFScaleX, h*PFScaleY);
     }
   } // End of Ghost.Display()
 
