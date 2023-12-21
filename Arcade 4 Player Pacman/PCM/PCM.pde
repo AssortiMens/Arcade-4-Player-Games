@@ -30,6 +30,7 @@ AudioSample BigDotSound;
 AudioSample SmallDotSound;
 AudioSample StartTunePacman;
 AudioSample GameOverSound;
+AudioSample Explosion;
 
 Tile tiles[][] = new Tile[31][56]; //note it goes y then x because of how I inserted the data
 int tilesRepresentation[][] = {
@@ -131,6 +132,7 @@ void setup()
     BigDotSound = minim.loadSample("data/BigDotSound.wav");
     StartTunePacman = minim.loadSample("data/StartTunePacman.wav");
     GameOverSound = minim.loadSample("data/GameOverSound.wav");
+    Explosion = minim.loadSample("data/BonusSound.wav");
   }
   catch (Exception e) {
     println("Can not open Sounds!");
@@ -1303,14 +1305,15 @@ class PacMan
   PVector pos = new PVector(1, 0); // null; // int x,y;
   int w, h;
   int score; // int score = 0;
-  int lives = 10;
+  int lives = 1;
   color Color;
   PVector vel = new PVector(-1, 0);
   PVector turnTo = new PVector(-1, 0);
   boolean turn = false;
   boolean gameover = false;
   boolean JustEaten = false;
-
+  Shooting shootKa = null;
+  
   PacMan(int tx, int ty, int tw, int th, color tColor)
   {
     pos = new PVector(tx, ty); // x = tx;
@@ -1319,11 +1322,14 @@ class PacMan
     h = th;
     Color = tColor;
     score = 0;
+    shootKa = null;
     gameover = false;
   }
 
   void Display()
   {
+    if (shootKa != null)
+      shootKa.Display();
     fill(Color);
     if (((JustEaten)&&((frameCounter & 1) == 0)) || (!JustEaten)) {
       //     println(int(atan2(vel.y,vel.x)/HALF_PI)+1);
@@ -1373,6 +1379,9 @@ class PacMan
 
   void Update()
   {
+    if (shootKa != null)
+      shootKa.Update();
+    
     if ((pos.x) < (floor(width/112))) {
       pos.x = (((55*floor(width/(2*28)))+floor(width/112))); // - vel.x);
     } else if ((pos.x) > ((55*floor(width/(2*28)))+floor(width/112))) {
@@ -1390,6 +1399,16 @@ class PacMan
         Lampjes |= (1L<<(LinksToetsen[0]-TranslationConstance));
         turnTo.x = -1;
         turnTo.y = 0;
+      }
+      if (stick.getButton(VuurKnoppen[0]).pressed()) {
+        Lampjes |= (1L<<(VuurKnoppen[0]-TranslationConstance));
+        if (shootKa == null)
+          shootKa = new Shooting(pos.x,pos.y,10,10,2*vel.x,2*vel.y);
+        else
+          {
+            if ((shootKa.x < 0)||(shootKa.x > width)||(shootKa.y < 0)||(shootKa.y > height))
+              shootKa = null;
+          }
       }
       if (stick.getButton(RechtsToetsen[0]).pressed()) {
         Lampjes |= (1L<<(RechtsToetsen[0]-TranslationConstance));
@@ -1414,6 +1433,16 @@ class PacMan
         turnTo.x = 0;
         turnTo.y = 1;
       }
+      if (stick.getButton(VuurKnoppen[1]).pressed()) {
+        Lampjes |= (1L<<(VuurKnoppen[1]-TranslationConstance));
+        if (shootKa == null)
+          shootKa = new Shooting(pos.x,pos.y,10,10,2*vel.x,2*vel.y);
+        else
+          {
+            if ((shootKa.x < 0)||(shootKa.x > width)||(shootKa.y < 0)||(shootKa.y > height))
+              shootKa = null;
+          }
+      }
       if (stick.getButton(RechtsToetsen[1]).pressed()) {
         Lampjes |= (1L<<(RechtsToetsen[1]-TranslationConstance));
         turnTo.x = 0;
@@ -1437,6 +1466,16 @@ class PacMan
         turnTo.x = 1;
         turnTo.y = 0;
       }
+      if (stick.getButton(VuurKnoppen[2]).pressed()) {
+        Lampjes |= (1L<<(VuurKnoppen[2]-TranslationConstance));
+        if (shootKa == null)
+          shootKa = new Shooting(pos.x,pos.y,10,10,2*vel.x,2*vel.y);
+        else
+          {
+            if ((shootKa.x < 0)||(shootKa.x > width)||(shootKa.y < 0)||(shootKa.y > height))
+              shootKa = null;
+          }
+      }
       if (stick.getButton(RechtsToetsen[2]).pressed()) {
         Lampjes |= (1L<<(RechtsToetsen[2]-TranslationConstance));
         turnTo.x = -1;
@@ -1459,6 +1498,16 @@ class PacMan
         Lampjes |= (1L<<(LinksToetsen[3]-TranslationConstance));
         turnTo.x = 0;
         turnTo.y = -1;
+      }
+      if (stick.getButton(VuurKnoppen[3]).pressed()) {
+        Lampjes |= (1L<<(VuurKnoppen[3]-TranslationConstance));
+        if (shootKa == null)
+          shootKa = new Shooting(pos.x,pos.y,10,10,2*vel.x,2*vel.y);
+        else
+          {
+            if ((shootKa.x < 0)||(shootKa.x > width)||(shootKa.y < 0)||(shootKa.y > height))
+              shootKa = null;
+          }
       }
       if (stick.getButton(RechtsToetsen[3]).pressed()) {
         Lampjes |= (1L<<(RechtsToetsen[3]-TranslationConstance));
@@ -1636,6 +1685,7 @@ class Ghost
   boolean chase = true;
   boolean frightened = false;
   boolean deadForABit = false;
+  boolean GhostExploded = false;
   int deadCount = 0, chaseCount = 0, flashCount = 0;
 
   PVector vel = new PVector(-1, 0);
@@ -1652,6 +1702,8 @@ class Ghost
     w = tw;
     h = th;
     Color = tColor;
+
+    GhostExploded = false;
 
     returnHome = false;
 
@@ -1751,7 +1803,21 @@ class Ghost
           fill(0, 0, 200);
         }
       }
-      ellipse(pos.x, pos.y, w*PFScaleX, h*PFScaleY);
+      if (GhostExploded == false) {
+        ellipse(pos.x, pos.y, w*PFScaleX, h*PFScaleY);
+      }
+      if (GhostExploded == true) {
+        frightened = true;
+        flashCount = 0;
+        strokeWeight(3);
+        noFill();
+        ellipse(pos.x,pos.y,w*PFScaleX,h*PFScaleY);
+        w++;h++;
+        if ((w > 255) || (h > 255)) {
+          w=32;h=32;frightened = false;GhostExploded = false;flashCount = 0;
+          stroke(Color,255);fill(Color,255);
+        }
+      }
     }
   } // End of Ghost.Display()
 
