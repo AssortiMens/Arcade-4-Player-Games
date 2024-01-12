@@ -1,7 +1,7 @@
 /****************************/
 /* Arcade 4 - Player PacMan */
 /****************************/
-/*(c) 2022-2023  AssortiMens*/
+/*(c) 2022-2024  AssortiMens*/
 /*                          */
 /*    (w)  William  Senn    */
 /*                          */
@@ -108,7 +108,7 @@ void setup()
 {
   //  size(996,640); //Start experimenting with these values and see what your baby can do!
     fullScreen(); //fullScreen and size can not be used simultaneously, at least one is needed!
-  //  size(1488,744);
+  //  size(1512,744);
   //  size(896,496);
   noCursor(); //switch off your mouse cursor within the window being used. (clipped!)
   frameRate(100); //So, what's up Doc? Remember: High rates are clipped to a max!
@@ -916,7 +916,7 @@ void PCM_Demo1()
   fill(TextKleur);
   text("AssortiMens presents", 0, -50);
   text("Four Player PacMan", 0, 0);
-  text("© 2022-2023", 0, 50);
+  text("© 2022-2024", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -2381,6 +2381,8 @@ class Ghost
   }
 }  // End of class Ghost
 
+int GlobPlayerX = 0;
+
 class Joystick {
   PacMan    PlayerIsPacman = null;
   PacMan    AIPacman = null;
@@ -2389,8 +2391,10 @@ class Joystick {
   Highscore Highscore = null;
   Menu      Menu = null;
   int       Angle = 0;
-  int       xOrient, yOrient;
+  int       Angles[] = {0,270,180,90};
+//  int       xOrient, yOrient;
   color     Color = color(255);
+  int       Score = 0;
 
   Joystick(PacMan tPacMan, Ghost tGhost, color tColor) {
     PlayerIsPacman = tPacMan;
@@ -2400,29 +2404,45 @@ class Joystick {
     Color = tColor;
     Highscore = null;
     Menu = null;
-    xOrient = 0;
-    yOrient = 0;
+//    xOrient = 0;
+//    yOrient = 0;
   }
 
   void Display() {
     if (PlayerIsPacman != null) {
       PlayerIsPacman.Display();
+      Score = PlayerIsPacman.score;
     } else {
       if (PlayerIsGhost != null) {
         PlayerIsGhost.Display();
+        Score = PlayerIsGhost.score;
       } else {
         if (AIGhost != null) {
           AIGhost.Display();
+          Score = AIGhost.score;
         } else {
           if (AIPacman != null) {
             AIPacman.Display();
+            Score = AIPacman.score;
           } else {
             println("Initialisatiefout Display!");
           }
         }
       }
     }
-  }
+    pushMatrix();
+    translate((width/2)-((width/2)*sin(radians(Angles[GlobPlayerX]))),(height/2)+((height/2)*cos(radians(Angles[GlobPlayerX]))));
+    rotate(radians(Angles[GlobPlayerX]));
+    fill(255);
+    textSize(20);
+    textAlign(LEFT,CENTER);
+    text(Naam[GlobPlayerX],-100,-15);
+    textAlign(RIGHT,CENTER);
+    text(Score,100,-15);
+    GlobPlayerX++;
+    GlobPlayerX &= 3;
+    popMatrix();
+  } // End of Joystick.Display()
 
   void Update() {
     if (PlayerIsPacman != null) {
