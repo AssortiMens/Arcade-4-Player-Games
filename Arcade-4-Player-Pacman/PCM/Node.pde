@@ -16,7 +16,7 @@ class Node {
   //draw a little circle
   void show() {
     fill(0, 100, 100);
-    ellipse(x*floor(width/(2*28)) + floor(width/112), y*floor(height/31) + floor(height/62), 10, 10 );
+    ellipse((x * floor(width/(56))) + floor(width/112), (y * floor(height/31)) + floor(height/62), 10, 10 );
   }
 
   //-------------------------------------------------------------------------------------------------------------------------------------------------

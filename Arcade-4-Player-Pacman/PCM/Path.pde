@@ -42,15 +42,13 @@ class Path {
   //--------------------------------------------------------------------------------------------------------------------------------------------
   //draw lines representing the path
   void show() {
-    int j=1;
-    
-    strokeWeight(2);
-    for (int i = 1; i < (path.size()); i++) {
-      line(path.get(i).x*floor(width/(2*28)) +(floor(width/112)), path.get(i).y*floor(height/31) +(floor(height/62)), path.get(i-1).x*floor(width/(2*28)) +(floor(width/112)), path.get(i-1).y*floor(height/31) +(floor(height/62)));
-    }
-//    ellipse(path.get(path.size()-1).x*floor(width/(2*28)) +8, path.get(path.size()-1).y*floor(height/31) +8, 5, 5);
-    if ((j > 0) && ((path.size()) > 0)) {
-      ellipse(path.get(j-1).x*floor(width/56)+(floor(width/112)),path.get(j-1).y*floor(height/31)+(floor(height/62)),5,5);
+    if (path.size() > 0) {
+      strokeWeight(2);
+      for (int i = 1; i < (path.size()); i++) {
+        line((path.get(i-1).x * floor(width/(56))) + (floor(width/112)), (path.get(i-1).y * floor(height/31)) + (floor(height/62)), (path.get(i).x * floor(width/(56))) + (floor(width/112)), (path.get(i).y * floor(height/31)) + (floor(height/62)));
+//        path.get(i-1).show(); // Node.show()
+      }
+      ellipse((path.get(path.size() - 1).x * floor(width/(56))) + (floor(width/112)), (path.get(path.size() - 1).y * floor(height/31)) + (floor(height/62)), 5, 5);
     }
   }
 }
