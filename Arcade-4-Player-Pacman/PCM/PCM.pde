@@ -2528,6 +2528,7 @@ int PlayerAngle[] = { 0, 270, 180, 90 };
 boolean Once[] = {false, false, false, false};
 boolean CollectedFireButtons[] = {false, false, false, false};
 int NumCollectedFireButtons = 0;
+int Hulpje = 0;
 
 boolean XRepKeys[] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
   false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -2545,13 +2546,15 @@ class Highscore {
   int CursorY = 0;
   int KarCount = 64;
   char Cursor = '_';
-  char chars[] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+  char chars[] = {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\0'};
+//  char chars2[] = {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\0'};
   boolean Crown = false;
   boolean RepKey[] = {false, false, false, false, false};
 
   Highscore(int tScore, int tPlayerX, boolean tCrown) {
 
     Score = tScore;
+    Hulpje = 0;
     playerX = tPlayerX;
     CursorX = 0;
     CursorY = 0;
@@ -2616,28 +2619,30 @@ class Highscore {
     Joys[2] = joy1;
     Joys[3] = joy2;
 
-    pushMatrix();
-    textAlign(CENTER, CENTER);
-    translate(((width / 2) - (( width / 4) * (sin(radians(PlayerAngle[playerX]))))), (( height / 2) + (( height / 4) * (cos(radians(PlayerAngle[playerX]))))));
-    rotate(radians(PlayerAngle[playerX]));
-    for (int i=(CursorY-4); i<(CursorY-4+8); i++) {
+    if (NumCollectedFireButtons != Hulpje) {
+      pushMatrix();
+      textAlign(CENTER, CENTER);
+      translate(((width / 2) - (( width / 4) * (sin(radians(PlayerAngle[playerX]))))), (( height / 2) + (( height / 4) * (cos(radians(PlayerAngle[playerX]))))));
+      rotate(radians(PlayerAngle[playerX]));
+      for (int i=(CursorY-4); i<(CursorY-4+8); i++) {
 
-      fill(((HumanPlayer[playerX] == true)&&(Joys[playerX].Highscore != null)&&((CursorY) == i))?(Joys[playerX].Color):(color(255, 255, 255)));
+        fill(((HumanPlayer[playerX] == true)&&(Joys[playerX].Highscore != null)&&((CursorY) == i))?(Joys[playerX].Color):(color(255, 255, 255)));
 
-      textSize(20);
-      if (Highscores[i+10] != 0)
-      {
-        textAlign(LEFT, CENTER);
-        text(Order[i+10], -120, 20*((i-CursorY+4)));
-        textAlign(LEFT, CENTER);
-        text(NaamLijst[i+10], -90, 20*((i-CursorY+4)));
-        textAlign(RIGHT, CENTER);
-        text(Highscores[i+10], 120, 20*((i-CursorY+4)));
-        textAlign(CENTER, CENTER);
-        text(CrownLijst[i+10], 140, 20*((i-CursorY+4)));
+        textSize(20);
+        if (Highscores[i+10] != 0)
+        {
+          textAlign(LEFT, CENTER);
+          text(Order[i+10], -120, 20*((i-CursorY+4)));
+          textAlign(LEFT, CENTER);
+          text(NaamLijst[i+10], -90, 20*((i-CursorY+4)));
+          textAlign(RIGHT, CENTER);
+          text(Highscores[i+10], 120, 20*((i-CursorY+4)));
+          textAlign(CENTER, CENTER);
+          text(CrownLijst[i+10], 140, 20*((i-CursorY+4)));
+        }
       }
+      popMatrix();
     }
-    popMatrix();
   }
 
   void Update()
@@ -2649,6 +2654,16 @@ class Highscore {
     Joys[1] = joy4;
     Joys[2] = joy1;
     Joys[3] = joy2;
+    
+    Hulpje = NumHumanPlayers;
+    for (i=0;i<4;i++) {
+      if ((HumanPlayer[i] == true)&&(Joys[i].Highscore != null)&&(Joys[i].Highscore.CursorY>39)) {
+        Hulpje--;
+        if (Hulpje<0)
+          Hulpje=0;
+      }
+    }
+
     if ((CursorY < 40)&&(Joys[playerX].Highscore != null)&&(HumanPlayer[playerX] == true)) {
       for (j=0; j<NumKeysPerPlayer; j++)
       {
@@ -2781,23 +2796,6 @@ class Highscore {
           }
           buttonPressed = false;
           CollectedFireButtons[playerX] = HumanPlayer[playerX];  // true;
-          NumCollectedFireButtons = 0;
-
-          for (j=0; j<4; j++) {
-            NumCollectedFireButtons = ((CollectedFireButtons[j])?(NumCollectedFireButtons+1):(NumCollectedFireButtons));
-          }
-          if (NumCollectedFireButtons == (NumHumanPlayers-NumGhosts)) { // remove -NumGhosts when ready, please!!! Formula incorrect!
-            resetGame = true;
-            if (resetGame==true) {
-              do {
-                ButtonPressed();
-              } while (buttonPressed==true);
-              saveHighscores(); // Might be a timebomb?!
-              frameCounter=0;
-              fc_now=frameCounter;
-              resetGame=false;
-            }
-          }
           RepKey[1] = true;
         }
       } else
@@ -2818,17 +2816,36 @@ class Highscore {
       }
     }
 
+    NumCollectedFireButtons = 0;
+
+    for (j=0; j<4; j++) {
+      NumCollectedFireButtons = ((CollectedFireButtons[j])?(NumCollectedFireButtons+1):(NumCollectedFireButtons));
+    }
+    if (NumCollectedFireButtons == Hulpje) { //NumGhosts)) { // remove -NumGhosts when ready, please!!! Formula incorrect!
+      resetGame = true;
+      if (resetGame==true) {
+        do {
+          ButtonPressed();
+        } while (buttonPressed==true);
+        saveHighscores(); // Might be a timebomb?!
+        frameCounter=0;
+        fc_now=frameCounter;
+        resetGame=false;
+      }
+    }
+
     // Do strcpy(NaamLijst[CursorY],Naam[playerX]); here!
     //    memcpy(NaamLijst[CursorY],Naam[playerX],10);
     // This is your double buffering!
 
-    chars = Naam[playerX].toCharArray();
+    chars = (Naam[playerX].toCharArray());
     if (CursorY > 39) {
       if (!(Once[playerX])) {
         println(Naam[playerX], ", you dropped off the highscorelist!");
         Once[playerX] = true;
       }
-    } else {
+    }
+    else {
       NaamLijst[CursorY+10] = String.valueOf(chars);
     }
   }
