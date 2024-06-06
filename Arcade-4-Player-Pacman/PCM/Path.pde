@@ -28,7 +28,7 @@ class Path {
     temp.path = (LinkedList)path.clone();
     temp.distance = distance;
     temp.distToFinish = distToFinish;
-    temp.velAtLast = new PVector(velAtLast.x, velAtLast.y);
+    temp.velAtLast = new PVector(velAtLast.x, velAtLast.y , null);
     return temp;
   }
   //--------------------------------------------------------------------------------------------------------------------------------------------

@@ -1178,7 +1178,7 @@ Path AStar(Node start, Node finish, PVector vel)
   // startin off with big storing a path with only the starting node
 
   extend.addToTail(start, finish);
-  extend.velAtLast = new PVector(vel.x, vel.y); // used to prevent ghosts from doing a u turn
+  extend.velAtLast = new PVector(vel.x, vel.y,null); // used to prevent ghosts from doing a u turn
   big.add(extend);
 
 
@@ -1227,13 +1227,13 @@ Path AStar(Node start, Node finish, PVector vel)
           if (tempN != extend.path.getLast().edges.get(i)) // if not going backwards i.e. the new node is not the previous node behind it
           {
             // if the direction to the new node is in the opposite to the way the path was heading then dont count this path
-            PVector directionToNode = new PVector( extend.path.getLast().edges.get(i).x - extend.path.getLast().x, extend.path.getLast().edges.get(i).y - extend.path.getLast().y );
+            PVector directionToNode = new PVector( extend.path.getLast().edges.get(i).x - extend.path.getLast().x, extend.path.getLast().edges.get(i).y - extend.path.getLast().y , null );
             directionToNode.limit(vel.mag());
             if (directionToNode.x == -1* extend.velAtLast.x && directionToNode.y == -1* extend.velAtLast.y ) {
             } else { // if not turning around
               extended = extend.clone();
               extended.addToTail(extend.path.getLast().edges.get(i), finish);
-              extended.velAtLast = new PVector(directionToNode.x, directionToNode.y);
+              extended.velAtLast = new PVector(directionToNode.x, directionToNode.y,null);
               sorting.add(extended.clone()); // add this extended list to the list of paths to be sorted
             }
           }
@@ -1297,18 +1297,18 @@ PVector getNearestNonWallTile(PVector target) {
       }
     }
   }
-  return new PVector(minIndexi, minIndexj); // return a PVector to the tile
+  return new PVector(minIndexi, minIndexj, null); // return a PVector to the tile
 }
 
 class PacMan
 {
-  PVector pos = new PVector(1, 0); // null; // int x,y;
+  PVector pos = new PVector(1, 0, null); // null; // int x,y;
   int w, h;
   int score; // int score = 0;
   int lives = 1;
   color Color;
-  PVector vel = new PVector(-1, 0);
-  PVector turnTo = new PVector(-1, 0);
+  PVector vel = new PVector(-1, 0, null);
+  PVector turnTo = new PVector(-1, 0, null);
   boolean turn = false;
   boolean gameover = false;
   boolean JustEaten = false;
@@ -1316,7 +1316,7 @@ class PacMan
   
   PacMan(int tx, int ty, int tw, int th, color tColor)
   {
-    pos = new PVector(tx, ty); // x = tx;
+    pos = new PVector(tx, ty, null); // x = tx;
     // y = ty;
     w = tw;
     h = th;
@@ -1535,7 +1535,7 @@ class PacMan
   {
     if ((((pos.x - floor(width/112)) % floor(width / (2*28))) == 0) && (((pos.y - floor(height/62)) % floor(height/31)) == 0)) { // if on a critical position
 
-      PVector matrixPosition = new PVector(abs(floor(((pos.x - floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y - floor(height/62)) / floor(height/31))))%31); // convert position to an array position
+      PVector matrixPosition = new PVector(abs(floor(((pos.x - floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y - floor(height/62)) / floor(height/31))))%31 , null); // convert position to an array position
 
       // reset all the paths for all the ghosts
 
@@ -1595,7 +1595,7 @@ class PacMan
       }
 
 
-      PVector positionToCheck = new PVector(abs(floor(matrixPosition.x + turnTo.x))%56, abs(floor(matrixPosition.y + turnTo.y))%31); // the position in the tiles double array that the player is turning towards
+      PVector positionToCheck = new PVector(abs(floor(matrixPosition.x + turnTo.x))%56, abs(floor(matrixPosition.y + turnTo.y))%31, null); // the position in the tiles double array that the player is turning towards
 
       if (tiles[floor(positionToCheck.y)%31][floor(positionToCheck.x)%56].wall) { // check if there is a free space in the direction that it is going to turn
         if (tiles[abs(floor(matrixPosition.y + vel.y))%31][abs(floor(matrixPosition.x + vel.x))%56].wall) { // if not check if the path ahead is free
@@ -1604,12 +1604,12 @@ class PacMan
           return true;
         }
       } else { // free to turn
-        vel = new PVector(turnTo.x, turnTo.y);
+        vel = new PVector(turnTo.x, turnTo.y,null);
         return true;
       }
     } else {
       if ((((pos.x+(10*vel.x) - floor(width/112)) % floor(width/(2*28))) == 0) && (((pos.y + (10*vel.y) - floor(height/62)) % floor(height/31)) == 0)) { // if 10 places off a critical position in the direction that pacman is moving
-        PVector matrixPosition = new PVector(abs(floor(((pos.x+(10*vel.x)-floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y+(10*vel.y)-floor(height/62)) / floor(height/31))))%31); // convert that position to an array position
+        PVector matrixPosition = new PVector(abs(floor(((pos.x+(10*vel.x)-floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y+(10*vel.y)-floor(height/62)) / floor(height/31))))%31,null); // convert that position to an array position
         if (!tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten ) { // if that tile has not been eaten
           tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true; // eat it
           score += 1;
@@ -1647,7 +1647,7 @@ class PacMan
         }
       }
       if ((turnTo.x + vel.x == 0) && (vel.y + turnTo.y == 0)) { // if turning chenging directions entirely i.e. 180 degree turn
-        vel = new PVector(turnTo.x, turnTo.y); // turn
+        vel = new PVector(turnTo.x, turnTo.y, null); // turn
         return true;
       }
       return true; // if not on a critical postion then continue forward
@@ -1676,7 +1676,7 @@ int BonusMultiplier = 1;
 
 class Ghost
 {
-  PVector pos = new PVector(13*floor(width/(2*28))+floor(width/112), 14*floor(height/31)+floor(height/62)); // int x,y;
+  PVector pos = new PVector(13*floor(width/(2*28))+floor(width/112), 14*floor(height/31)+floor(height/62), null); // int x,y;
   int w, h;
   color Color;
   int score = 0;
@@ -1688,8 +1688,8 @@ class Ghost
   boolean GhostExploded = false;
   int deadCount = 0, chaseCount = 0, flashCount = 0;
 
-  PVector vel = new PVector(-1, 0);
-  PVector turnTo = new PVector(0, 0);
+  PVector vel = new PVector(-1, 0, null);
+  PVector turnTo = new PVector(0, 0, null);
   Path bestPath = new Path(); // the variable stores the path the ghost will be following
   ArrayList<Node> ghostNodes = new ArrayList<Node>(); // the nodes making up the path including the ghosts position and the target position
   Node start; // the ghosts position as a node
@@ -1697,7 +1697,7 @@ class Ghost
 
   Ghost(int tx, int ty, int tw, int th, color tColor)
   {
-    pos = new PVector(tx, ty); // pos.x = tx;
+    pos = new PVector(tx, ty, null); // pos.x = tx;
     // pos.y = ty;
     w = tw;
     h = th;
@@ -1926,7 +1926,7 @@ class Ghost
           y = ((0*floor(height/31))+(floor(height/62)));
         }
       }
-      pos = new PVector(x, y);
+      pos = new PVector(x, y, null);
 
       //    turnTo = new PVector(0,0);
 
@@ -1934,7 +1934,7 @@ class Ghost
         if (stick.getButton(LinksToetsen[0]).pressed()) {
           //        newVel.x = -1;
           //        newVel.y = 0;
-          turnTo = new PVector(-1, 0);
+          turnTo = new PVector(-1, 0, null);
           Lampjes |= (1L<<(LinksToetsen[0]-TranslationConstance));
           //        vel = new PVector(-1,0);
           //        pos.add(vel);
@@ -1944,7 +1944,7 @@ class Ghost
         if (stick.getButton(RechtsToetsen[0]).pressed()) {
           //        newVel.x = 1;
           //        newVel.y = 0;
-          turnTo = new PVector(1, 0);
+          turnTo = new PVector(1, 0, null);
           Lampjes |= (1L<<(RechtsToetsen[0]-TranslationConstance));
           //        vel = new PVector(1,0);
           //        pos.add(vel);
@@ -1954,7 +1954,7 @@ class Ghost
         if (stick.getButton(PlusToetsen[0]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = -1;
-          turnTo = new PVector(0, -1);
+          turnTo = new PVector(0, -1, null);
           Lampjes |= (1L<<(PlusToetsen[0]-TranslationConstance));
           //        vel = new PVector(0,-1);
           //        pos.add(vel);
@@ -1964,7 +1964,7 @@ class Ghost
         if (stick.getButton(MinToetsen[0]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = 1;
-          turnTo = new PVector(0, 1);
+          turnTo = new PVector(0, 1, null);
           Lampjes |= (1L<<(MinToetsen[0]-TranslationConstance));
           //        vel = new PVector(0,1);
           //        pos.add(vel);
@@ -1978,7 +1978,7 @@ class Ghost
         if (stick.getButton(LinksToetsen[1]).pressed()) {
           //        newVel.x = -1;
           //        newVel.y = 0;
-          turnTo = new PVector(0, 1);
+          turnTo = new PVector(0, 1, null);
           Lampjes |= (1L<<(LinksToetsen[1]-TranslationConstance));
           //        vel = new PVector(0,1);
           //        pos.add(vel);
@@ -1988,7 +1988,7 @@ class Ghost
         if (stick.getButton(RechtsToetsen[1]).pressed()) {
           //        newVel.x = 1;
           //        newVel.y = 0;
-          turnTo = new PVector(0, -1);
+          turnTo = new PVector(0, -1, null);
           Lampjes |= (1L<<(RechtsToetsen[1]-TranslationConstance));
           //        vel = new PVector(0,-1);
           //        pos.add(vel);
@@ -1998,7 +1998,7 @@ class Ghost
         if (stick.getButton(PlusToetsen[1]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = -1;
-          turnTo = new PVector(-1, 0);
+          turnTo = new PVector(-1, 0, null);
           Lampjes |= (1L<<(PlusToetsen[1]-TranslationConstance));
           //        vel = new PVector(-1,0);
           //        pos.add(vel);
@@ -2008,7 +2008,7 @@ class Ghost
         if (stick.getButton(MinToetsen[1]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = 1;
-          turnTo = new PVector(1, 0);
+          turnTo = new PVector(1, 0, null);
           Lampjes |= (1L<<(MinToetsen[1]-TranslationConstance));
           //        vel = new PVector(1,0);
           //        pos.add(vel);
@@ -2022,7 +2022,7 @@ class Ghost
         if (stick.getButton(LinksToetsen[2]).pressed()) {
           //        newVel.x = -1;
           //        newVel.y = 0;
-          turnTo = new PVector(1, 0);
+          turnTo = new PVector(1, 0, null);
           Lampjes |= (1L<<(LinksToetsen[2]-TranslationConstance));
           //        vel = new PVector(1,0);
           //        pos.add(vel);
@@ -2032,7 +2032,7 @@ class Ghost
         if (stick.getButton(RechtsToetsen[2]).pressed()) {
           //        newVel.x = 1;
           //        newVel.y = 0;
-          turnTo = new PVector(-1, 0);
+          turnTo = new PVector(-1, 0, null);
           Lampjes |= (1L<<(RechtsToetsen[2]-TranslationConstance));
           //        vel = new PVector(-1,0);
           //        pos.add(vel);
@@ -2042,7 +2042,7 @@ class Ghost
         if (stick.getButton(PlusToetsen[2]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = -1;
-          turnTo = new PVector(0, 1);
+          turnTo = new PVector(0, 1, null);
           Lampjes |= (1L<<(PlusToetsen[2]-TranslationConstance));
           //        vel = new PVector(0,1);
           //        pos.add(vel);
@@ -2052,7 +2052,7 @@ class Ghost
         if (stick.getButton(MinToetsen[2]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = 1;
-          turnTo = new PVector(0, -1);
+          turnTo = new PVector(0, -1, null);
           Lampjes |= (1L<<(MinToetsen[2]-TranslationConstance));
           //        vel = new PVector(0,-1);
           //        pos.add(vel);
@@ -2066,7 +2066,7 @@ class Ghost
         if (stick.getButton(LinksToetsen[3]).pressed()) {
           //        newVel.x = -1;
           //        newVel.y = 0;
-          turnTo = new PVector(0, -1);
+          turnTo = new PVector(0, -1, null);
           Lampjes |= (1L<<(LinksToetsen[3]-TranslationConstance));
           //        vel = new PVector(0,-1);
           //        pos.add(vel);
@@ -2076,7 +2076,7 @@ class Ghost
         if (stick.getButton(RechtsToetsen[3]).pressed()) {
           //        newVel.x = 1;
           //        newVel.y = 0;
-          turnTo = new PVector(0, 1);
+          turnTo = new PVector(0, 1, null);
           Lampjes |= (1L<<(RechtsToetsen[3]-TranslationConstance));
           //        vel = new PVector(0,1);
           //        pos.add(vel);
@@ -2086,7 +2086,7 @@ class Ghost
         if (stick.getButton(PlusToetsen[3]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = -1;
-          turnTo = new PVector(1, 0);
+          turnTo = new PVector(1, 0, null);
           Lampjes |= (1L<<(PlusToetsen[3]-TranslationConstance));
           //        vel = new PVector(1,0);
           //        pos.add(vel);
@@ -2096,7 +2096,7 @@ class Ghost
         if (stick.getButton(MinToetsen[3]).pressed()) {
           //        newVel.x = 0;
           //        newVel.y = 1;
-          turnTo = new PVector(-1, 0);
+          turnTo = new PVector(-1, 0, null);
           Lampjes |= (1L<<(MinToetsen[3]-TranslationConstance));
           //        vel = new PVector(-1,0);
           //        pos.add(vel);
@@ -2108,8 +2108,11 @@ class Ghost
       //    else {
       //      pos.add(vel);
       //      if (checkDir())
-      if (((!HumanPlayer[0])&&(joy3.AIGhost==this))||((!HumanPlayer[1])&&(joy4.AIGhost==this))||((!HumanPlayer[2])&&(joy1.AIGhost==this))||((!HumanPlayer[3])&&(joy2.AIGhost==this)))
+      if (((HumanPlayer[0] == false) && (joy3.AIGhost == this)) || ((HumanPlayer[1] == false) && (joy4.AIGhost == this)) || ((HumanPlayer[2] == false) && (joy1.AIGhost == this)) || ((HumanPlayer[3] == false) && (joy2.AIGhost == this)))
+       {
         pos.add(vel); // Add AI movement
+        checkDirection();
+       }
       checkDirection();
       //    }}}}
       //     if (checkDir()) { // check if need to change direction next move
@@ -2124,7 +2127,7 @@ class Ghost
   boolean checkDir() {
     if (((((int)(pos.x-floor(width/112))+(int)0)%floor(width/56)) == 0) && (((int)(pos.y-floor(height/62))+(int)0)%floor(height/31)) == 0)
     {
-      PVector matrixPosition = new PVector(abs(floor(pos.x-floor(width/112))/floor(width/56))%56, abs(floor(pos.y-floor(height/62))/floor(height/31))%31);
+      PVector matrixPosition = new PVector(abs(floor(pos.x-floor(width/112))/floor(width/56))%56, abs(floor(pos.y-floor(height/62))/floor(height/31))%31, null);
 
       if (tiles[(abs((int)matrixPosition.y+(int)turnTo.y))%31][(abs((int)matrixPosition.x+(int)turnTo.x))%56].wall) {
         if (tiles[(abs((int)matrixPosition.y+(int)vel.y))%31][(abs((int)matrixPosition.x+(int)vel.x))%56].wall) {
@@ -2133,22 +2136,22 @@ class Ghost
           return(true);
         }
       } else {
-        vel = new PVector(turnTo.x, turnTo.y);
+        vel = new PVector(turnTo.x, turnTo.y, null);
         return(true);
       }
     } else {
       //      vel = new PVector(turnTo.x,turnTo.y);
       if (((turnTo.x + vel.x) == 0) && ((turnTo.y + vel.y) == 0)) {
         if ((turnTo.x == 0) && (turnTo.y == 0)) {
-          vel = new PVector(turnTo.x, turnTo.y);
+          vel = new PVector(turnTo.x, turnTo.y, null);
           return(true);
         } else {
-          vel = new PVector(turnTo.x, turnTo.y);
+          vel = new PVector(turnTo.x, turnTo.y, null);
         }
         return(true);
       } else {
         if ((turnTo.x == 0)&&(turnTo.y == 0)) {
-          vel = new PVector(turnTo.x, turnTo.y);
+          vel = new PVector(turnTo.x, turnTo.y, null);
         }
         return(true);
       }
@@ -2294,7 +2297,7 @@ class Ghost
 
     if (((pos.x-floor(width/112)) % floor(width/(2*28)) == 0) && ((pos.y - floor(height/62)) % floor(height/31) == 0)) { // if on a critical position
 
-      PVector matrixPosition = new PVector(abs(floor(((pos.x-floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y-floor(height/62)) / floor(height/31))))%31); // convert position to an array position
+      PVector matrixPosition = new PVector(abs(floor(((pos.x-floor(width/112)) / floor(width/(2*28)))))%56, abs(floor(((pos.y-floor(height/62)) / floor(height/31))))%31, null); // convert position to an array position
 
       if (frightened) { // no path needs to generated by the ghost if frightened
         boolean isNode = false;
@@ -2309,18 +2312,18 @@ class Ghost
           PVector newVel = new PVector();
           //          int rand = floor(random(4));
           do {
-            switch(floor(random(4))) {
-            case 0:
-              newVel = new PVector(1, 0);
+            switch(int(random(4))) {
+             case 0:
+              newVel = new PVector(1, 0, null);
               break;
-            case 1:
-              newVel = new PVector(0, 1);
+             case 1:
+              newVel = new PVector(0, 1, null);
               break;
-            case 2:
-              newVel = new PVector(-1, 0);
+             case 2:
+              newVel = new PVector(-1, 0, null);
               break;
-            case 3:
-              newVel = new PVector(0, -1);
+             case 3:
+              newVel = new PVector(0, -1, null);
               break;
             }
           } while ((tiles[abs(floor(matrixPosition.y + newVel.y))%31][abs(floor(matrixPosition.x + newVel.x))%56].wall) || ((newVel.x + (2*vel.x) == 0) && (newVel.y + (2*vel.y) == 0)));
@@ -2348,7 +2351,7 @@ class Ghost
            
            */
 
-          vel = new PVector(newVel.x/2, newVel.y/2); // halve the speed
+          vel = new PVector(newVel.x/2, newVel.y/2, null); // halve the speed
           return;
         }
       } else { // not frightened
@@ -2361,7 +2364,7 @@ class Ghost
             for (int i = 0; i < (bestPath.path.size()-1); i++) { // if currently on a node turn towards the direction of the next node in the path
               if ((matrixPosition.x == bestPath.path.get(i).x) && (matrixPosition.y == bestPath.path.get(i).y)) {
 
-                vel = new PVector(bestPath.path.get(i+1).x - matrixPosition.x, bestPath.path.get(i+1).y - matrixPosition.y);
+                vel = new PVector(bestPath.path.get(i+1).x - matrixPosition.x, bestPath.path.get(i+1).y - matrixPosition.y, null);
 
                 vel.limit(1);
 
