@@ -1,8 +1,8 @@
-/****************************/
-/*   HoofdMenu / MainMenu   */
-/*    © 2024 AssortiMens    */
-/* (w) 2024 by William Senn */
-/****************************/
+/******************************/
+/*    HoofdMenu / MainMenu    */
+/*  © 2024-2025  AssortiMens  */
+/* (w) 2024-2025 William Senn */
+/******************************/
 
 import ddf.minim.*;
 import org.gamecontrolplus.*;
@@ -22,7 +22,7 @@ int frameCounter        = 0;
 
 int NumKeys              = 20; /* 20 voor de kast / Arduino */
 int TotalNumKeys         = 120; // Normal keyboard, use 20 out of 120
-int TranslationConstance = 11; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
+int TranslationConstance = 0; // 0 for no translation and kast / Arduino. 1 for PC. 11 for macosx.
 int NumKeysPerPlayer     = 5;
 
 int LinksToetsen[] =  {TranslationConstance+0, TranslationConstance+5, TranslationConstance+10, TranslationConstance+15};
@@ -58,7 +58,7 @@ void setup()
     if (control != null)
       {
         println(control.deviceListToText(""));
-        stick = control.getDevice(0); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
+        stick = control.getDevice("Arduino Leonardo"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
       }
     else
       {
@@ -93,7 +93,7 @@ void setup()
     System.exit(0);
   }
 
-   /*
+   // /*
 
    try {
    printArray(Serial.list());
@@ -195,7 +195,7 @@ void ser_Build_Msg_String_And_Send(int tCode)
     for (int i = 0; i < len; i++) {
       //      print(msgchars[i]);
 
-       /*
+       // /*
 
        serial.write((byte)(msgchars[i]));
        
@@ -483,7 +483,7 @@ void HM_Demo1()
   text("AssortiMens presents", 0, -50);
   text("4-Player Games", 0, -12);
   text("Main Menu", 0, 12);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -527,7 +527,7 @@ void HM_Demo2()
   fill(TextKleur);
   text("Programming", 0, -50);
   text("William Senn", 0, 0);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -571,7 +571,7 @@ void HM_Demo3()
   fill(TextKleur);
   text("Graphics & GFX", 0, -50);
   text("William Senn", 0, 0);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -615,7 +615,7 @@ void HM_Demo4()
   fill(TextKleur);
   text("Music & SFX", 0, -50);
   text("Longzijun & William Senn", 0, 0);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);

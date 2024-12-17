@@ -1,7 +1,7 @@
 /****************************/
 /* Arcade 4 - Player PacMan */
 /****************************/
-/*(c) 2022-2024  AssortiMens*/
+/*(c) 2022-2025  AssortiMens*/
 /*                          */
 /*    (w)  William  Senn    */
 /*                          */
@@ -916,7 +916,7 @@ void PCM_Demo1()
   fill(TextKleur);
   text("AssortiMens presents", 0, -50);
   text("Four Player PacMan", 0, 0);
-  text("© 2022-2024", 0, 50);
+  text("© 2022-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);

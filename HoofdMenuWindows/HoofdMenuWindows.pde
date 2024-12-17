@@ -1,8 +1,8 @@
-/****************************/
-/*   HoofdMenu / MainMenu   */
-/*    © 2024 AssortiMens    */
-/* (w) 2024 by William Senn */
-/****************************/
+/******************************/
+/*    HoofdMenu / MainMenu    */
+/*  © 2024-2025  AssortiMens  */
+/* (w) 2024-2025 William Senn */
+/******************************/
 
 import ddf.minim.*;
 import org.gamecontrolplus.*;
@@ -342,8 +342,8 @@ void draw()
       int exitVal = 1;      
 //      try {
 //        try {
-        String cmdString[] = {"cmd /c c:processing-4.3-windows-x64\\processing-4.3\\processing-java --sketch=\"c:../../Arcade-4-Player-Games-kopie/Arcade-4-Player-Pacman/PCM\" --run",
-                              "cmd /c c:processing-4.3-windows-x64\\processing-4.3\\processing-java --sketch=\"c:../../Arcade-4-Player-Games-kopie/Arcade-4-Player-Pong/FPP\" --run"};
+        String cmdString[] = {"cmd /c c:processing-4.3.1-windows-x64\\processing-4.3.1\\processing-java --sketch=\"c:../../Arcade-4-Player-Games-kopie/Arcade-4-Player-Pacman/PCM\" --run",
+                              "cmd /c c:processing-4.3.1-windows-x64\\processing-4.3.1\\processing-java --sketch=\"c:../../Arcade-4-Player-Games-kopie/Arcade-4-Player-Pong/FPP\" --run"};
 //        Runtime rt = Runtime.getRuntime();
         Process pr = null;
 //        int exitVal = 1; //pr.waitFor();
@@ -483,7 +483,7 @@ void HM_Demo1()
   text("AssortiMens presents", 0, -50);
   text("4-Player Games", 0, -12);
   text("Main Menu", 0, 12);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -527,7 +527,7 @@ void HM_Demo2()
   fill(TextKleur);
   text("Programming", 0, -50);
   text("William Senn", 0, 0);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -571,7 +571,7 @@ void HM_Demo3()
   fill(TextKleur);
   text("Graphics & GFX", 0, -50);
   text("William Senn", 0, 0);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -615,7 +615,7 @@ void HM_Demo4()
   fill(TextKleur);
   text("Music & SFX", 0, -50);
   text("Longzijun & William Senn", 0, 0);
-  text("© 2024", 0, 50);
+  text("© 2024-2025", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
