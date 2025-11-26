@@ -10,7 +10,14 @@ class PVector {
     y = 1;
     PVectorOld = null;
   }
-  
+
+  PVector(float tx,float ty)
+   {
+     x=tx;
+     y=ty;
+     PVectorOld = null;
+   }
+
   PVector(float tx,float ty,PVector tPVectorOld)
    {
     x = (tx);
@@ -20,7 +27,7 @@ class PVector {
      {
       PVectorOld.x = x;
       PVectorOld.y = y;
-//      delete(this);
+      delete(PVectorOld);
      }
   }
 
@@ -42,6 +49,12 @@ class PVector {
    x += tPVector.x;
    y += tPVector.y;
    return this;
+ }
+
+void delete(PVector tPVOld)
+ {
+   if (tPVOld != null)
+     delete(tPVOld); // Test.remove((int)tPVOld->getInstance(this)); // delete(tPVOld);
  }
 
 }

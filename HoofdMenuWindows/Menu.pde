@@ -1,18 +1,23 @@
+boolean buttonPressedMenu[] = {false,false,false,false};
+
+
 class Menu {
-  int    NumItems,ItemSelected = 0;
+  int    NumItems;
+  int    ItemSelected;
   color  Color;
   color  ColorSelected;
-  String[] MenuItems;
   int textAngle[] = {0,270,180,90};
   int PlayerX = 0;
+  String[] MenuItems;
   
-  Menu(int tNumItems, color tColor, String[] tMenu)
+  Menu(int tNumItems, color tColor, String tMenu[])
   {
     NumItems = tNumItems;
     ColorSelected = tColor;
     MenuItems = tMenu;
     Color = color(255,255,255);
     PlayerX = Player&3;
+    ItemSelected = 0;
   }
 
   void Display(int PlayerC)
@@ -25,7 +30,7 @@ class Menu {
     translate((width/2)-((width/4)*sin(radians(textAngle[PlayerX]))),(height/2)+((height/4)*cos(radians(textAngle[PlayerX]))));
     rotate(radians(textAngle[PlayerX]));
     text("Choose (Color!):",0,-25); // Menu header
-    for (int i=0;i<NumItems;i++)
+    for (int i = 0; i < NumItems; i++)
      {
       fill(Color);
       if (i == ItemSelected)
@@ -42,65 +47,108 @@ class Menu {
     // change menu according to keys
 
    PlayerX = (PlayerZ & 3);
-   
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(LinksToetsen[PlayerX]).pressed() == true))
+   buttonPressed=false;
+   ButtonPressed();
+
+//   if (buttonPressedMenu[PlayerX] == true) {
+   if ( (tweeDeler[(5*PlayerX)+0]==false) && (((HumanPlayer[PlayerX])&&(stick!=null)&&(stick.getButton(LinksToetsen[PlayerX]).pressed()==true))||((HumanPlayer[PlayerX])&&(stick==null)&&(keyPressed)&&((keysPressed[(5*PlayerX)+0]) == LinksToetsen2[PlayerX]))))
    {
-     if (!(tweeDeler[(5*PlayerX)+0]))
+     if ((tweeDeler[(5*PlayerX)+0]) == false)
      {
        ItemSelected--;
+       if (ItemSelected < 0)
+         ItemSelected = (NumItems - 1);
        tweeDeler[(5*PlayerX)+0] = true;
+//       keysPressed[(5*PlayerX)+0] = 0;
      }
+//     else
+//       tweeDeler[(5*PlayerX)+0] = false;
    }
    else
    {
-     tweeDeler[(5*PlayerX)+0] = false;
+     if (!keyPressed) {
+       tweeDeler[(5*PlayerX)+0] = false;
+     }
    }
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(RechtsToetsen[PlayerX]).pressed() == true))
+   if ((tweeDeler[(5*PlayerX)+1]==false)&&(((HumanPlayer[PlayerX])&&(stick!=null)&&(stick.getButton(VuurKnoppen[PlayerX]).pressed()==true))||((HumanPlayer[PlayerX])&&(stick==null)&&(keyPressed)&&((keysPressed[(5*PlayerX)+1]) == VuurKnoppen2[PlayerX])))) // keysPressed[(5*PlayerX)+1]==((VuurKnoppen2[PlayerX])))))
    {
-     if (!(tweeDeler[(5*PlayerX)+2]))
+     if ((tweeDeler[(5*PlayerX)+1]) == false)
+     {
+       frameCounter = 10999; // push/force early out!
+       tweeDeler[(5*PlayerX)+1] = true;
+//       keysPressed[(5*PlayerX)+1] = 0;
+     }
+//     else
+//       tweeDeler[(5*PlayerX)+1] = false;
+   }
+   else
+   {
+     if (!keyPressed)
+       tweeDeler[(5*PlayerX)+1] = false;
+   }
+   
+   if ((tweeDeler[(5*PlayerX)+2]==false)&&(((HumanPlayer[PlayerX])&&(stick!=null)&&(stick.getButton(RechtsToetsen[PlayerX]).pressed()==true))||((HumanPlayer[PlayerX])&&(stick==null)&&(keyPressed)&&((keysPressed[(5*PlayerX)+2]) == RechtsToetsen2[PlayerX])))) // keysPressed[(5*PlayerX)+2]==((RechtsToetsen2[PlayerX])))))
+   {
+     if ((tweeDeler[(5*PlayerX)+2]) == false)
      {
        ItemSelected++;
+       if (ItemSelected >= NumItems)
+         ItemSelected = 0;
        tweeDeler[(5*PlayerX)+2] = true;
+//       keysPressed[(5*PlayerX)+2] = 0;
      }
+//     else
+//       tweeDeler[(5*PlayerX)+2] = false;
    }
    else
    {
-     tweeDeler[(5*PlayerX)+2] = false;
+     if (!keyPressed)
+       tweeDeler[(5*PlayerX)+2] = false;
    }
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(PlusToetsen[PlayerX]).pressed() == true))
+   if ((tweeDeler[(5*PlayerX)+3]==false)&&(((HumanPlayer[PlayerX])&&(stick!=null)&&(stick.getButton(PlusToetsen[PlayerX]).pressed()==true))||((HumanPlayer[PlayerX])&&(stick==null)&&(keyPressed)&&((keysPressed[(5*PlayerX)+3]) == PlusToetsen2[PlayerX])))) // keysPressed[(5*PlayerX)+3]==((PlusToetsen2[PlayerX])))))
    {
-     if (!(tweeDeler[(5*PlayerX)+3]))
+     if ((tweeDeler[(5*PlayerX)+3]) == false)
      {
        ItemSelected--;
+       if (ItemSelected < 0)
+         ItemSelected = (NumItems - 1);
        tweeDeler[(5*PlayerX)+3] = true;
+//       keysPressed[(5*PlayerX)+3] = 0;
      }
+//     else
+//       tweeDeler[(5*PlayerX)+3] = false;
    }
    else
    {
-     tweeDeler[(5*PlayerX)+3] = false;
+     if (!keyPressed)
+       tweeDeler[(5*PlayerX)+3] = false;
    }
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(MinToetsen[PlayerX]).pressed() == true))
+   if ((tweeDeler[(5*PlayerX)+4]==false)&&(((HumanPlayer[PlayerX])&&(stick!=null)&&(stick.getButton(MinToetsen[PlayerX]).pressed()==true))||((HumanPlayer[PlayerX])&&(stick==null)&&(keyPressed)&&((keysPressed[(5*PlayerX)+4]) == MinToetsen2[PlayerX])))) // keysPressed[(5*PlayerX)+4]==((MinToetsen2[PlayerX])))))
    {
-     if (!(tweeDeler[(5*PlayerX)+4]))
+     if ((tweeDeler[(5*PlayerX)+4]) == false)
        {
         ItemSelected++;
+        if (ItemSelected >= NumItems)
+          ItemSelected = 0;
         tweeDeler[(5*PlayerX)+4] = true;
+//        keysPressed[(5*PlayerX)+4] = 0;
        }
+//       else
+//         tweeDeler[(5*PlayerX)+4] = false;
    }
    else
    {
-     tweeDeler[(5*PlayerX)+4] = false;
+     if (!keyPressed)
+       tweeDeler[(5*PlayerX)+4] = false;
    }
       
-   if (ItemSelected < 0)
-      ItemSelected = NumItems-1;
-   if (ItemSelected > NumItems-1)
-      ItemSelected = 0;
-   ItemSelected %= NumItems;
-  }
+   ItemSelected = (ItemSelected % NumItems);
+   buttonPressedMenu[PlayerX] = false;
+//  }
+ }
   
 }
 
@@ -109,6 +157,6 @@ boolean tweeDeler[] = {false,false,false,false,false,
                        false,false,false,false,false,
                        false,false,false,false,false};
 
-Menu Menu = null;
+//Menu Menu[] = {null,null,null,null};
 
-String Options[] = {"Arcade 4 Player Pacman", "Arcade 4 Player Pong"};
+String Options[] = {"Arcade 4 Player Pacman", "Arcade 4 Player Pong", "Brickwall demo", "Gyruss demo"};

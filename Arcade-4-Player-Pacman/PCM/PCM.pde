@@ -112,7 +112,9 @@ void setup()
   //  size(896,496);
   noCursor(); //switch off your mouse cursor within the window being used. (clipped!)
   frameRate(100); //So, what's up Doc? Remember: High rates are clipped to a max!
-
+  pixelDensity(1);
+  smooth();
+  
   control = ControlIO.getInstance(this);
 
   try {
@@ -1269,7 +1271,7 @@ Path AStar(Node start, Node finish, PVector vel)
     if (big.isEmpty()) {
       if (winner == false) // there is not path from start to finish
       {
-        print("FUCK!!!!!!!!!!"); // error message
+//        print("FUCK!!!!!!!!!!"); // error message
         return null;
       } else { // if winner is found then the shortest winner is stored in winning path so return that
         return winningPath.clone();
@@ -1341,7 +1343,7 @@ class PacMan
         rotate(-HALF_PI);
         arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
-        println("down"); // debug info
+//        println("down"); // debug info
         break;
       case 3: // going to the left?!
         pushMatrix();
@@ -1349,7 +1351,7 @@ class PacMan
         rotate(0);
         arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
-        println("left"); // debug info
+//        println("left"); // debug info
         break;
       case 0: // going up?!
         pushMatrix();
@@ -1357,7 +1359,7 @@ class PacMan
         rotate(HALF_PI);
         arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
-        println("up"); // debug info
+//        println("up"); // debug info
         break;
       case 1: // going right?!
         pushMatrix();
@@ -1365,7 +1367,7 @@ class PacMan
         rotate(PI);
         arc(0, 0, w*PFScaleX, h*PFScaleY, radians(-150), radians(150), 0);
         popMatrix();
-        println("right"); // debug info
+//        println("right"); // debug info
         break;
       }
     }
@@ -1562,7 +1564,7 @@ class PacMan
         tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true;
         score += 1; //add a point
         JustEaten = true;
-        println(this, " Score: ", score);
+//        println(this, " Score: ", score);
         if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // if big dot eaten
           // set all ghosts to frightened
           score += 9; // should be 9
@@ -1614,7 +1616,7 @@ class PacMan
           tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].eaten = true; // eat it
           score += 1;
           JustEaten = true;
-          println(this, " Score: ", score);
+//          println(this, " Score: ", score);
           if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // big dot eaten
             // set all ghosts as frightened
             score += 9;
@@ -1747,7 +1749,7 @@ class Ghost
           {
             bonus = new BonusToolTip(Color, (BonusMultiplier * 200), pos.x, pos.y);
             score = (BonusMultiplier * 200); // was score += (BonusMultiplier * 200);
-            println(this, " Ghost Score: ", score);
+//            println(this, " Ghost Score: ", score);
             Joystick Joys[] = {joy3, joy4, joy1, joy2};
             Joys[0]=joy3;
             Joys[1]=joy4;

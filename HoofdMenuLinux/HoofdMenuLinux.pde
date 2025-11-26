@@ -31,6 +31,12 @@ int RechtsToetsen[] = {TranslationConstance+2, TranslationConstance+7, Translati
 int PlusToetsen[] =   {TranslationConstance+3, TranslationConstance+8, TranslationConstance+13, TranslationConstance+18};
 int MinToetsen[] =    {TranslationConstance+4, TranslationConstance+9, TranslationConstance+14, TranslationConstance+19};
 
+int LinksToetsen2[] =  {1, 6, 11, 16};
+int VuurKnoppen2[] =   {2, 7, 12, 17};
+int RechtsToetsen2[] = {3, 8, 13, 18};
+int PlusToetsen2[] =   {4, 9, 14, 19};
+int MinToetsen2[] =    {5, 10, 15, 20};
+
 int Player              = 0;
 int Key                 = 0;
 
@@ -52,6 +58,8 @@ void setup()
   //size(800,600);
   noCursor();
   frameRate(100);
+  pixelDensity(1);
+  smooth();
 
   try {
     control = ControlIO.getInstance(this);
@@ -59,6 +67,10 @@ void setup()
       {
         println(control.deviceListToText(""));
         stick = control.getDevice("Arduino Leonardo"); // devicename (inside double-quotes!) or device number (without the double-quotes!) here.
+        if (stick == null)
+         {
+           println("Could not open device Arduino Leonardo, using standardkeyboard instead!");
+         }
       }
     else
       {
@@ -69,8 +81,11 @@ void setup()
       }
   }
   catch (Exception e) {
-    println("No Arduino found or no Toetsenbord/Keyboard configured!");
-    System.exit(0);
+    println("No Arduino Leonardo found or no Toetsenbord/Keyboard configured! Check your rights!?");
+    stick = null;
+    println(e.toString());
+    e.printStackTrace();
+//    System.exit(0);
   }
   try {
     minim = null;
@@ -258,9 +273,9 @@ void draw()
       joy3 = new Joystick(color(0,0,255));
     if (joy4 == null)
       joy4 = new Joystick(color(0,255,0));
-    frameCounter=10000;
-    buttonPressed=false;
-    for (int i=0; i<4; i++) {
+    frameCounter = 10000;
+    buttonPressed = false;
+    for (int i = 0; i < 4; i++) {
       HumanPlayer[i]=false;
     }
   }
@@ -322,15 +337,19 @@ void draw()
     Joys[1] = joy4;
     Joys[2] = joy1;
     Joys[3] = joy2;
-    for (int p=0; p<4; p++) {
-      if ((Joys[p].Menu == null) && (HumanPlayer[p] == true))
+    buttonPressed = false;
+    ButtonPressed();
+    for (int p = 0; p < 4; p++) {
+      buttonPressedMenu[p] = buttonPressed;
+      if ((Joys[p] != null) && (Joys[p].Menu == null) && (HumanPlayer[p] == true))
       {
-        Joys[p].Menu = new Menu(2, Joys[p].Color, Options);
+        Joys[p].Menu = new Menu(4, Joys[p].Color, Options);
       }
-      if ((Joys[p].Menu != null) && (HumanPlayer[p] == true))
+      if ((Joys[p] != null) && (Joys[p].Menu != null) && (HumanPlayer[p] == true))
       {
         Joys[p].Menu.Display(p);
-        Joys[p].Menu.Update(p);
+        if (buttonPressedMenu[p])
+          Joys[p].Menu.Update(p);
         ChosenOne[p] = Joys[p].Menu.ItemSelected;
       }
     }
@@ -342,13 +361,16 @@ void draw()
       int exitVal = 1;      
 //      try {
 //        try {
-        String cmdString[] = {"sudo processing-4.3.1/processing-java --sketch=\"Arcade-4-Player-Games-kopie/Arcade-4-Player-Pacman/PCM\" --run",
-                              "sudo processing-4.3.1/processing-java --sketch=\"Arcade-4-Player-Games-kopie/Arcade-4-Player-Pong/FPP\" --run"};
+        String cmdString[] = {"processing cli --sketch=\"Arcade-4-Player-Pacman/PCM\" --run",
+                              "processing cli --sketch=\"Arcade-4-Player-Pong/FPP\" --run",
+                              "processing cli --sketch=\"Brickwall-Demo/BrickWall\" --run",
+                              "processing cli --sketch=\"Gyruss-Demo/Gyruss\" --run"
+                             };
 //        Runtime rt = Runtime.getRuntime();
         Process pr = null;
 //        int exitVal = 1; //pr.waitFor();
 
-        switch(ChosenFour & 1)
+        switch(ChosenFour)
          {
            case 0:
             {
@@ -389,6 +411,68 @@ void draw()
 
              try{
                pr = Runtime.getRuntime().exec(cmdString[1],null,null); // "processing-java","--sketch=\"../Arcade 4 Player Pong/FPP\"","--run");
+             }
+             catch(IOException e) {
+               println(e.toString());
+               e.printStackTrace();
+               System.exit(1);
+             }
+
+             try{
+               if (pr != null) {
+                 while((pr.waitFor() == 1) && (exitVal != 0))
+                  {
+                    exitVal = pr.exitValue();
+                  }
+//               exitVal = pr.exitValue();
+               }
+             }
+             catch(InterruptedException e) {
+               println(e.toString());
+               e.printStackTrace();
+               System.exit(1);
+             }
+             break;
+            }
+           case 2:
+            {
+             println(cmdString[2]);
+             exitVal = 1;
+             System.exit(0);
+
+            try{
+              pr = Runtime.getRuntime().exec(cmdString[2],null,null);
+            }
+            catch(IOException e) {
+              println(e.toString());
+              e.printStackTrace();
+              System.exit(0);
+            }
+            try {
+               if (pr != null) {
+                 while((pr.waitFor() == 1) && (exitVal != 0))
+                  {
+                   exitVal = pr.exitValue();
+                  }
+//             exitVal = pr.exitValue();
+               }
+             }
+             catch(InterruptedException e) {
+               println(e.toString());
+               e.printStackTrace();
+               System.exit(0);
+             }
+             
+             break;
+            }
+           case 3:
+            {
+             println(cmdString[3]);
+             exitVal = 1;
+             System.exit(1);
+
+             try{
+               pr = Runtime.getRuntime().exec(cmdString[3],null,null); // "processing-java","--sketch=\"../Arcade 4 Player Pong/FPP\"","--run");
              }
              catch(IOException e) {
                println(e.toString());
@@ -627,8 +711,14 @@ void HM_Demo4()
 }
 
 void ButtonPressed() {
+  int toets = 0;
+  
+//  if (keyPressed)
+//  {
+//  }
   buttonPressed = false;
   for (int z=TranslationConstance; z<(NumKeys+TranslationConstance); z++) {
+   if (stick != null) {
     if (stick.getButton(z % TotalNumKeys).pressed()) {
       buttonPressed = true;
       keysPressed[z] = (int)(z + 1);
@@ -638,6 +728,28 @@ void ButtonPressed() {
       keysPressed[z] = 0;
     }
   }
+  else
+  { // handle keys through standard handle, really?! I need an array of keys not a single key!!
+      char toets2 = key;
+      
+      toets2 &= 0x5f; // toUpper()
+      if ((toets2 >= 'A')&&(toets2 <= 'T')) {
+        toets = int(int(byte(toets2)) - int(byte('A'))) + 1;
+      }
+//      else if ((toets2 >= 'a')&&(toets2 <= 't'))
+//        toets = int(int(byte(toets2)) - int(byte('a'))) + 1;
+      else
+        toets=0;
+      if((toets > 0) && (toets < TotalNumKeys)) {
+        buttonPressed = true;
+        keysPressed[z] = toets; // this is a sequential read, not a parallel read! For a parallel read I will need an array! You can never play a quatre-mains on these stupid keyboards!!!!!!
+      }
+      else {
+        keysPressed[z] = 0;
+      }
+//    print(keysPressed[z], " ");
+  }
+ }
 }
 
 int CalcLicht() {
