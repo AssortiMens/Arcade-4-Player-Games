@@ -1,7 +1,7 @@
 /******************************/
 /*    HoofdMenu / MainMenu    */
-/*  © 2024-2025  AssortiMens  */
-/* (w) 2024-2025 William Senn */
+/*  © 2024-2026 William Senn  */
+/* (w) 2024-2026 William Senn */
 /******************************/
 
 import ddf.minim.*;
@@ -52,6 +52,8 @@ void setup()
   //size(800,600);
   noCursor();
   frameRate(100);
+  pixelDensity(1);
+  smooth();
 
   try {
     control = ControlIO.getInstance(this);
@@ -325,7 +327,7 @@ void draw()
     for (int p=0; p<4; p++) {
       if ((Joys[p].Menu == null) && (HumanPlayer[p] == true))
       {
-        Joys[p].Menu = new Menu(2, Joys[p].Color, Options);
+        Joys[p].Menu = new Menu(4, Joys[p].Color, Options);
       }
       if ((Joys[p].Menu != null) && (HumanPlayer[p] == true))
       {
@@ -342,13 +344,15 @@ void draw()
       int exitVal = 1;      
 //      try {
 //        try {
-        String cmdString[] = {"Arcade-4-Player-Games-main/Arcade-4-Player-Pacman/PCM/application.macosx/PCM.app/Contents/MacOS/PCM",
-                              "Arcade-4-Player-Games-main/Arcade-4-Player-Pong/FPP/application.macosx/FPP.app/Contents/MacOS/FPP"};
+        String cmdString[] = {"processing cli --sketch=\"./Arcade-4-Player-Pacman/PCM\" --run",
+                              "processing cli --sketch=\"./Arcade-4-Player-Pong/FPP\" --run",
+                              "processing cli --sketch=\"./Brickwall-Demo/BrickWall\" --run",
+                              "processing cli --sketch=\"./Gyruss-Demo/Gyruss\" --run"};
 //        Runtime rt = Runtime.getRuntime();
         Process pr = null;
 //        int exitVal = 1; //pr.waitFor();
 
-        switch(ChosenFour & 1)
+        switch(ChosenFour & 3)
          {
            case 0:
             {
@@ -412,6 +416,70 @@ void draw()
              }
              break;
             }
+
+           case 2:
+            {
+             println(cmdString[2]);
+             exitVal = 1;
+             System.exit(0);
+
+            try{
+              pr = Runtime.getRuntime().exec(cmdString[0],null,null);
+            }
+            catch(IOException e) {
+              println(e.toString());
+              e.printStackTrace();
+              System.exit(0);
+            }
+            try {
+               if (pr != null) {
+                 while((pr.waitFor() == 1) && (exitVal != 0))
+                  {
+                   exitVal = pr.exitValue();
+                  }
+//             exitVal = pr.exitValue();
+               }
+             }
+             catch(InterruptedException e) {
+               println(e.toString());
+               e.printStackTrace();
+               System.exit(0);
+             }
+             
+             break;
+            }
+           case 3:
+            {
+             println(cmdString[3]);
+             exitVal = 1;
+             System.exit(1);
+
+             try{
+               pr = Runtime.getRuntime().exec(cmdString[1],null,null); // "processing-java","--sketch=\"../Arcade 4 Player Pong/FPP\"","--run");
+             }
+             catch(IOException e) {
+               println(e.toString());
+               e.printStackTrace();
+               System.exit(1);
+             }
+
+             try{
+               if (pr != null) {
+                 while((pr.waitFor() == 1) && (exitVal != 0))
+                  {
+                    exitVal = pr.exitValue();
+                  }
+//               exitVal = pr.exitValue();
+               }
+             }
+             catch(InterruptedException e) {
+               println(e.toString());
+               e.printStackTrace();
+               System.exit(1);
+             }
+             break;
+            }
+
         }
 //       println(exitVal);
 //      }
@@ -483,7 +551,7 @@ void HM_Demo1()
   text("AssortiMens presents", 0, -50);
   text("4-Player Games", 0, -12);
   text("Main Menu", 0, 12);
-  text("© 2024-2025", 0, 50);
+  text("© 2024-2026", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -527,7 +595,7 @@ void HM_Demo2()
   fill(TextKleur);
   text("Programming", 0, -50);
   text("William Senn", 0, 0);
-  text("© 2024-2025", 0, 50);
+  text("© 2024-2026", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -571,7 +639,7 @@ void HM_Demo3()
   fill(TextKleur);
   text("Graphics & GFX", 0, -50);
   text("William Senn", 0, 0);
-  text("© 2024-2025", 0, 50);
+  text("© 2024-2026", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);
@@ -615,7 +683,7 @@ void HM_Demo4()
   fill(TextKleur);
   text("Music & SFX", 0, -50);
   text("Longzijun & William Senn", 0, 0);
-  text("© 2024-2025", 0, 50);
+  text("© 2024-2026", 0, 50);
 
   fill(255);
   text("Press a key to play!", 0, 230-55);

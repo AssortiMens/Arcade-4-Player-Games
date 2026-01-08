@@ -1,7 +1,7 @@
-/***********************/
-/* Gyruss Achtige Game */
-/* © 2025 William Senn */
-/***********************/
+/******************************/
+/*    Gyruss Achtige Game     */
+/* © 2025 - 2026 William Senn */
+/******************************/
 
 import ddf.minim.*;
 import org.gamecontrolplus.*;

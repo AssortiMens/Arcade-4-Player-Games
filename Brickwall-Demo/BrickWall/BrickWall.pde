@@ -1,9 +1,9 @@
-/***********************/
-/*      Brickwall      */
-/*      A game by      */
-/*    William  Senn    */
-/* © 2025 William Senn */
-/***********************/
+/******************************/
+/*         Brickwall          */
+/*         A game by          */
+/*        William Senn        */
+/* © 2025 - 2026 William Senn */
+/******************************/
 
 import ddf.minim.*;
 import org.gamecontrolplus.*;

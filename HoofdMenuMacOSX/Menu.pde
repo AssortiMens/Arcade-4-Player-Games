@@ -111,4 +111,4 @@ boolean tweeDeler[] = {false,false,false,false,false,
 
 Menu Menu = null;
 
-String Options[] = {"Arcade 4 Player Pacman", "Arcade 4 Player Pong"};
+String Options[] = {"Arcade 4 Player Pacman", "Arcade 4 Player Pong", "Brickwall-Demo", "Gyruss-Demo"};
