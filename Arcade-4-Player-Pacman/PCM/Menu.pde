@@ -1,18 +1,19 @@
 class Menu {
-  int    NumItems,ItemSelected = 0;
+  int NumItems = 0;
+  int ItemSelected = 0;
   color  Color;
   color  ColorSelected;
-  String[] MenuItems;
+  String MenuItems[];
   int textAngle[] = {0,270,180,90};
   int PlayerX = 0;
   
-  Menu(int tNumItems, color tColor, String[] tMenu)
+  Menu(int tNumItems, color tColor, String tMenu[])
   {
     NumItems = tNumItems;
     ColorSelected = tColor;
     MenuItems = tMenu;
     Color = color(255,255,255);
-    PlayerX = Player&3;
+//    PlayerX = Player&3;
   }
 
   void Display(int PlayerC)
@@ -25,11 +26,13 @@ class Menu {
     translate((width/2)-((width/4)*sin(radians(textAngle[PlayerX]))),(height/2)+((height/4)*cos(radians(textAngle[PlayerX]))));
     rotate(radians(textAngle[PlayerX]));
     text("Choose (Color!):",0,-25); // Menu header
-    for (int i=0;i<NumItems;i++)
+    for (int i = 0; i < NumItems; i++)
      {
-      fill(Color);
       if (i == ItemSelected)
         fill(ColorSelected);
+      else
+        fill(Color);
+
       text(MenuItems[i],0,25*i);
      }
     popMatrix();
@@ -42,8 +45,11 @@ class Menu {
     // change menu according to keys
 
    PlayerX = (PlayerZ & 3);
+
+   buttonPressed = false;
+   ButtonPressed();
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(LinksToetsen[PlayerX]).pressed() == true))
+   if ((HumanPlayer[PlayerX]) && (((stick != null) && (stick.getButton(LinksToetsen[PlayerX]).pressed())) || ((stick == null) && (LinksToetsen2[PlayerX] == keysPressed[(PlayerX * NumKeysPerPlayer) + 0]))))
    {
      if (!(tweeDeler[(5*PlayerX)+0]))
      {
@@ -56,7 +62,7 @@ class Menu {
      tweeDeler[(5*PlayerX)+0] = false;
    }
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(RechtsToetsen[PlayerX]).pressed() == true))
+   if ((HumanPlayer[PlayerX]) && (((stick != null) && (stick.getButton(RechtsToetsen[PlayerX]).pressed())) || ((stick == null) && (RechtsToetsen2[PlayerX] == keysPressed[(PlayerX * NumKeysPerPlayer) + 2]))))
    {
      if (!(tweeDeler[(5*PlayerX)+2]))
      {
@@ -69,7 +75,7 @@ class Menu {
      tweeDeler[(5*PlayerX)+2] = false;
    }
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(PlusToetsen[PlayerX]).pressed() == true))
+   if ((HumanPlayer[PlayerX]) && (((stick != null) && (stick.getButton(PlusToetsen[PlayerX]).pressed())) || ((stick == null) && (PlusToetsen2[PlayerX] == keysPressed[(PlayerX * NumKeysPerPlayer) + 3]))))
    {
      if (!(tweeDeler[(5*PlayerX)+3]))
      {
@@ -82,7 +88,7 @@ class Menu {
      tweeDeler[(5*PlayerX)+3] = false;
    }
    
-   if ((HumanPlayer[PlayerX])&&(stick.getButton(MinToetsen[PlayerX]).pressed() == true))
+   if ((HumanPlayer[PlayerX]) && (((stick != null) && (stick.getButton(MinToetsen[PlayerX]).pressed())) || ((stick == null) && (MinToetsen2[PlayerX] == keysPressed[(PlayerX * NumKeysPerPlayer) + 4]))))
    {
      if (!(tweeDeler[(5*PlayerX)+4]))
        {
@@ -95,10 +101,13 @@ class Menu {
      tweeDeler[(5*PlayerX)+4] = false;
    }
       
-   if (ItemSelected < 0)
-      ItemSelected = NumItems-1;
-   if (ItemSelected > NumItems-1)
+   if (ItemSelected < 0) {
+      ItemSelected = (NumItems - 1);
+   }
+   if (ItemSelected > (NumItems - 1)) {
       ItemSelected = 0;
+   }
+   
    ItemSelected %= NumItems;
   }
   
@@ -142,7 +151,7 @@ void keyPressed(){
 
 */
 
-Menu Menu = null;
+//Menu Menu = null;
 
 /*
 
