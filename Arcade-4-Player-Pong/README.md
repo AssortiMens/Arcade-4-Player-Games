@@ -1,6 +1,6 @@
 ## Arcade-4-Player-Pong
 
-![Pong](./20230208-Pong.jpg)
+![Pong](../20230208-Pong.jpg)
 
 This is supposed to be an Arcade version of a 4-player pong game, pong look alike game.
 
