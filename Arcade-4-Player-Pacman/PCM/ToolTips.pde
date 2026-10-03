@@ -189,7 +189,8 @@ class BonusToolTip {
     }
     
     if (Opacity==255)
-      BonusSound.trigger(); // trigger bonus sound once
+      if (BonusSound != null)
+        BonusSound.trigger(); // trigger bonus sound once
     Opacity--;
     if (Opacity<0)
       Opacity=0;

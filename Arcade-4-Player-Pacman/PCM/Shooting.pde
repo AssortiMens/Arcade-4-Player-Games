@@ -36,12 +36,14 @@ class Shooting
     for (int i=0;i<4;i++) {
       if (Joys[i].PlayerIsGhost != null)
         if (dist(x,y,Joys[i].PlayerIsGhost.pos.x,Joys[i].PlayerIsGhost.pos.y) < 10) {
-          Explosion.trigger(); // ghost explodes!
+          if (Explosion != null)
+            Explosion.trigger(); // ghost explodes!
           Joys[i].PlayerIsGhost.GhostExploded = true;
         }
       if (Joys[i].AIGhost != null)
         if (dist(x,y,Joys[i].AIGhost.pos.x,Joys[i].AIGhost.pos.y) < 10) {
-          Explosion.trigger(); // ghost explodes!
+          if (Explosion != null)
+            Explosion.trigger(); // ghost explodes!
           Joys[i].AIGhost.GhostExploded = true;
         }
     }

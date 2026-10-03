@@ -95,17 +95,17 @@ void setup()
       titlesong = minim.loadFile("data/12-dreams.mp3");
       if ((titlesong == null)) {
         println("Music / SFX failed to load!");
-        System.exit(0);
+//        System.exit(0);
       }
     }
     else {
       println("minim == null !!");
-      System.exit(0);
+//      System.exit(0);
     }
   }
   catch (Exception e) {
     println("No sounds found!");
-    System.exit(0);
+//    System.exit(0);
   }
 
    /*
@@ -122,7 +122,8 @@ void setup()
    
    // */
 
-  titlesong.loop();
+  if (titlesong != null)
+    titlesong.loop();
 
   Lampjes = 0;
   ser_Build_Msg_String_And_Send(Lampjes);

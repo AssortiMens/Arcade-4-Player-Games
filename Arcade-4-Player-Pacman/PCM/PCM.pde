@@ -135,6 +135,7 @@ void setup()
   }
 
   try {
+    minim = null; TitleSong = null; BonusSound = SmallDotSound = BigDotSound = StartTunePacman = GameOverSound = Explosion = null;
     minim = new Minim(this);
     TitleSong = minim.loadFile("data/Popcorn Remix [HD].mp3");
     BonusSound = minim.loadSample("data/BonusSound.wav"); // used in (Bonus) ToolTips!
@@ -146,7 +147,7 @@ void setup()
   }
   catch (Exception e) {
     println("Can not open Sounds!");
-    System.exit(0);
+//    System.exit(0);
   }
 
   try {
@@ -210,7 +211,8 @@ void setup()
   loadHighscores();
   saveHighscores();
 
-  TitleSong.loop();
+  if (TitleSong != null)
+    TitleSong.loop();
 }
 
 int Lampjes = 0;
@@ -676,7 +678,8 @@ void draw()
     DisplayCountdown(12000-frameCounter);
 
     if (frameCounter == 11500)
-      StartTunePacman.trigger();
+      if (StartTunePacman != null)
+        StartTunePacman.trigger();
   }
 
   if ((frameCounter == 12000) && (!GameOver) && (ValidCombi == true))
@@ -696,7 +699,8 @@ void draw()
     {
       // check highscore
 
-      GameOverSound.trigger();
+      if (GameOverSound != null)
+        GameOverSound.trigger();
 
       fc_now = frameCounter;
 
@@ -1621,7 +1625,8 @@ class PacMan
         if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // if big dot eaten
           // set all ghosts to frightened
           score += 9; // should be 9
-          BigDotSound.trigger(); // power-up sound
+          if (BigDotSound != null)
+            BigDotSound.trigger(); // power-up sound
           Blinky.frightened = true;
           Blinky.flashCount = 0;
           Clyde.frightened = true;
@@ -1646,7 +1651,8 @@ class PacMan
             }
           }
         } else
-          SmallDotSound.trigger();
+          if (SmallDotSound != null)
+            SmallDotSound.trigger();
       }
 
 
@@ -1673,7 +1679,8 @@ class PacMan
           if (tiles[floor(matrixPosition.y)][floor(matrixPosition.x)].bigDot) { // big dot eaten
             // set all ghosts as frightened
             score += 9;
-            BigDotSound.trigger();
+            if (BigDotSound != null)
+              BigDotSound.trigger();
             Blinky.frightened = true;
             Blinky.flashCount = 0;
             Clyde.frightened = true;
@@ -1698,7 +1705,8 @@ class PacMan
               }
             }
           } else
-            SmallDotSound.trigger();
+            if (SmallDotSound != null)
+              SmallDotSound.trigger();
         }
       }
       if ((turnTo.x + vel.x == 0) && (vel.y + turnTo.y == 0)) { // if turning chenging directions entirely i.e. 180 degree turn
